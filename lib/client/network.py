@@ -21,11 +21,4 @@ class ZombieClientFactory(protocol.ClientFactory):
         p = ZombieClientProtocol(self.game)
         p.factory = self
         return p
-
-def run_client():
-    from twisted.internet import reactor
-    factory = ZombieClientFactory()
-    # super todo
     
-if __name__ == '__main__':
-    run_client()
