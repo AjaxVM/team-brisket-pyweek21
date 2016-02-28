@@ -3,8 +3,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import pygame
 import os, json
 import logging
+from .. import settings
 
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 
 #CONSTANTS
 LEVEL_GRID_WIDTH = 32
@@ -25,8 +26,8 @@ class LevelLoader(object):
 
         self.level = level
 
-        self.config_path = os.path.join('data', 'levels', level+'.json')
-        self.image_path = os.path.join('data', 'levels', level+'.png')
+        self.config_path = os.path.join(settings.DATA_DIR, 'levels', level+'.json')
+        self.image_path = os.path.join(settings.DATA_DIR, 'levels', level+'.png')
 
         self.parseConfig()
         self.parseImage()
@@ -39,7 +40,6 @@ class LevelLoader(object):
 
     def parseImage(self):
         self.image = pygame.image.load(self.image_path)
-
         self.grid_size = (0,0)
 
         #list of elements which are (tile_type, pos(x,y))
