@@ -3,7 +3,7 @@ import logging
 import pygame
 from .. import settings
 
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 
 
 class Game(object):

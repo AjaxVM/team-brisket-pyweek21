@@ -4,7 +4,7 @@ import pygame
 from . import settings
 from .client.game import Game
 
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 
 
 def run_game():

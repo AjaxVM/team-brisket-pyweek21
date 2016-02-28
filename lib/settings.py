@@ -10,7 +10,7 @@ LOGGING = {
     'version': 1,
     'formatters': {
         'standard': {
-            'format': '%(asctime)s %(levelname)-8s %(module)s: %(message)s',
+            'format': '%(asctime)s %(levelname)-6s %(name)s: %(message)s',
         }
     },
     'handlers': {
