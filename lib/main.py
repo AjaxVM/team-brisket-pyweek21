@@ -16,7 +16,7 @@ def run_game():
     try:
         log.info('Starting pygame')
         pygame.init()
-            screen = pygame.display.set_mode(settings.WINDOW_SIZE)
+        screen = pygame.display.set_mode(settings.WINDOW_SIZE)
         game = Game(screen)
         game.start()
         while game.is_running:
