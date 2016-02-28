@@ -1,0 +1,1 @@
+This is for any assets we use, maps, images, sounds, etc.
