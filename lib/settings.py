@@ -5,6 +5,7 @@ import logging.config
 GAME_TITLE = "Zombie Brisket"
 WINDOW_SIZE = (600, 600)
 FPS = 60
+DEFAULT_PORT = 10543
 
 LOGGING = {
     'version': 1,
