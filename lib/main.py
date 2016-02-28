@@ -15,3 +15,13 @@ def run_game():
     game.start()
     while game.is_running:
         game.tick()
+
+
+def run_server():
+    log.info('Starting server')
+    #TODO
+
+    #for now just gonna test out the level loader
+    from .server.level_loader import LevelLoader
+
+    level = LevelLoader('level1')
