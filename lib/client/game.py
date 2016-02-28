@@ -2,6 +2,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import logging
 import pygame
 from .. import settings
+from .network import ZombieClientFactory
+from twisted.internet import reactor
 
 log = logging.getLogger(__name__)
 
@@ -13,8 +15,14 @@ class Game(object):
         self.background = pygame.Surface(settings.WINDOW_SIZE)
         self.is_running = True
 
+    def connect(self, host, port):
+        self.factory = ZombieClientFactory(self)
+        reactor.connectTCP(host, port, self.factory)
+        reactor.run()
+
     def start(self):
         self.background.fill(pygame.Color('#000000'))
+        reactor.callLater(0.1, self.tick)
 
     def tick(self):
         pygame.display.set_caption(settings.GAME_TITLE)
@@ -28,4 +36,10 @@ class Game(object):
                 if event.key == pygame.K_ESCAPE:
                     self.is_running = False
                     return
+                self.userInputReceived(chr(event.key))
         pygame.display.update()
+        if self.is_running:
+            reactor.callLater(0.1, self.tick)
+
+    def bindToClient(self, userInputReceived):
+        self.userInputReceived = userInputReceived

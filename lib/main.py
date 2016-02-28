@@ -17,8 +17,7 @@ def run_game():
         screen = pygame.display.set_mode(settings.WINDOW_SIZE)
         game = Game(screen)
         game.start()
-        while game.is_running:
-            game.tick()
+        game.connect('localhost', 10543)
 
     finally:
         server.terminate()  # not great longterm

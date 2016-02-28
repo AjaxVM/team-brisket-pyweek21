@@ -45,11 +45,14 @@ class ZombieFactory(Factory):
                      
     def buildProtocol(self, addr):
         log.info('Remote addr: {}'.format(addr))
-        return ZombieProtocol(self.game_server, self.players)
-
+        p = ZombieProtocol(self.game_server, self.players)
+        p.factory = self
+        return p
+        
     def addPlayer(self):
-        slot =  next(i for i in xrange(1, settings.NUMBER_OF_PLAYERS + 1) if i not in self.players)
+        slot = next(i for i in xrange(1, settings.NUMBER_OF_PLAYERS + 1) if i not in self.players)
         self.players[slot] = 1 #TODO - name players
+        return slot
                     
                      
     def removePlayer(self, slot):
