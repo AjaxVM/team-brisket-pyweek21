@@ -4,7 +4,7 @@ from ..shared import constants
 import pygame
 
 class ZombieClientProtocol(JsonReceiver):
-    # todo: figure this the hell out?
+    # todo: move all potential client and server 'directives' (commands) to constants
     key_mapping = {
         constants.STATE_ACTION: {
             pygame.K_LEFT: 'left',
