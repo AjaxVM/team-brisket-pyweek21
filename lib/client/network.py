@@ -1,6 +1,8 @@
 from twisted.internet import protocol
 from ..shared.protocol import JsonReceiver
 from ..shared import constants
+from .. import settings
+from .game import Game
 import pygame
 
 class ZombieClientProtocol(JsonReceiver):
@@ -32,14 +34,14 @@ class ZombieClientProtocol(JsonReceiver):
 
     def sendCommand(self, command, **kwargs):
         self.sendObject(command=command, params=kwargs)
-        
 
-    
-        
 
 class ZombieClientFactory(protocol.ClientFactory):
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
+        pygame.init()
+        screen = pygame.display.set_mode(settings.WINDOW_SIZE)
+        self.game = Game(screen)
+        self.game.start()
 
     def buildProtocol(self, addr):
         p = ZombieClientProtocol(self.game)

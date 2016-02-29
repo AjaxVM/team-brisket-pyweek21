@@ -2,7 +2,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import logging
 import pygame
 from .. import settings
-from .network import ZombieClientFactory
 from ..shared import constants
 from twisted.internet import reactor
 
@@ -16,11 +15,6 @@ class Game(object):
         self.background = pygame.Surface(settings.WINDOW_SIZE)
         self.is_running = True
         self.state = constants.STATE_ACTION  #todo actually implement state
-
-    def connect(self, host, port):
-        self.factory = ZombieClientFactory(self)
-        reactor.connectTCP(host, port, self.factory)
-        reactor.run()
 
     def start(self):
         self.background.fill(pygame.Color('#000000'))
