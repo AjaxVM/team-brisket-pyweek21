@@ -1,1 +1,8 @@
 TODO!!!
+
+Using the following assets:
+
+- Hostile Planet, tileset
+  - Author: chipmunk
+  - Source: http://opengameart.org/content/hostile-planet
+  - License: http://opengameart.org/content/oga-by-30-faq
