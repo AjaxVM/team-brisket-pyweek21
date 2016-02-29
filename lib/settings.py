@@ -9,6 +9,8 @@ FPS = 60
 DEFAULT_PORT = 10543
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
 
+NUMBER_OF_PLAYERS = 2
+
 LOGGING = {
     'version': 1,
     'formatters': {
