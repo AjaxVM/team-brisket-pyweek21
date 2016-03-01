@@ -36,7 +36,6 @@ class State(BaseState):
         self.game.forceQuit()
 
     def doSingleplayer(self):
-        self.game.game_client.startLocalServer()
         self.game.game_client.connect()
         self.game.gotoState('play_game')
 
