@@ -79,21 +79,9 @@ class GameClient(object):
             reactor.callLater(self.network_fps, self.eventTick)
 
 class ZombieClientProtocol(JsonReceiver):
-    # todo: move all potential client and server 'directives' (commands) to constants
-    # key_mapping = {
-    #     constants.STATE_ACTION: {
-    #         pygame.K_LEFT: 'left',
-    #         pygame.K_RIGHT: 'right',
-    #         pygame.K_z: 'jump',
-    #         pygame.K_ESCAPE: 'quit',
-    #     },
-    #     constants.STATE_WAITING: {
-    #         pygame.K_ESCAPE: 'quit',
-    #     },
-    # }
 
     def __init__(self, game_client):
-        self.game_client = game_client #TODO: do we need access to this?
+        self.game_client = game_client
         self.connected = False
 
     def connectionMade(self):
