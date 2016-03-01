@@ -1,6 +1,7 @@
 from twisted.internet import protocol
 from twisted.internet import reactor
 from twisted.internet import defer
+from twisted.internet.task import deferLater
 from ..shared.protocol import JsonReceiver
 from .. import settings
 from .game import Game
@@ -30,8 +31,6 @@ class GameClient(object):
 
         self.command_queue = []
 
-        self.local_server = None
-
     def command(self, command, **kwargs):
         self.command_queue.append({
             'command': command,
@@ -50,25 +49,10 @@ class GameClient(object):
         self.ticking = False
         self.game.destroy()
         reactor.stop()
-        self.stopLocalServer()
 
     def connect(self):
         log.info('Connecting to server')
         self.connection = reactor.connectTCP('localhost', settings.DEFAULT_PORT, self.factory)
-
-    def stopLocalServer(self):
-        log.info('Stopping local server')
-        if self.local_server:
-            self.local_server.terminate()
-            self.local_server = None
-
-    def startLocalServer(self):
-        log.info('Starting local server')
-        if self.local_server:
-            self.stopLocalServer()
-
-        self.local_server = Process(target=server_process)
-        self.local_server.start()
 
     def disconnect(self):
         log.info('Disconnecting from server')
@@ -90,12 +74,18 @@ class GameClient(object):
     def tick(self):
         if self.ticking:
             self.game.gameLoop()
-            reactor.callLater(self.fps, self.tick)
+            deferLater(reactor, self.fps, self.tick).addErrback(self.errorHandler)
 
     def eventTick(self):
         if self.ticking:
             self.processEvents()
-            reactor.callLater(self.network_fps, self.eventTick)
+            deferLater(reactor, self.network_fps, self.eventTick).addErrback(self.errorHandler)
+
+    def errorHandler(self, failure):
+        import traceback
+        log.error('Quitting due to exception:\n{}'.format(traceback.format_exc(failure.value)))
+        self.stop()
+
 
 class ZombieClientProtocol(JsonReceiver):
 
@@ -113,19 +103,15 @@ class ZombieClientProtocol(JsonReceiver):
     def objectReceived(self, obj):
         print(obj)
 
+
 class ZombieClientFactory(protocol.ClientFactory):
     def __init__(self):
         game = Game()
-
         self.game_client = GameClient(game, self)
-        try:
-            self.game_client.start()
-        finally:
-            #just in case so we don't have the orphaned server
-            self.game_client.stopLocalServer()
+        self.game_client.start()
+        reactor.run()
 
     def buildProtocol(self, addr):
         p = ZombieClientProtocol(self.game_client)
         p.factory = self
         return p
-    
