@@ -25,10 +25,11 @@ def move_bbox(bbox, vec):
 
 class Entity(object):
 
+    bbox = Bbox(0, 0, 0, 0)
+    velocity = Vec(0, 0)
+    alive = False
+
     def __init__(self):
-        self.alive = False
-        self.bbox = Bbox(0, 0, 0, 0)
-        self.velocity = Vec(0, 0)
         self.__hash = next(ENTITY_ID_SEQ)
 
     def __repr__(self):
@@ -36,3 +37,10 @@ class Entity(object):
 
     def __hash__(self):
         return self.__hash
+
+    def tick(self):
+        raise NotImplementedError('Implement Me')
+
+    def state_repr(self):
+        raise NotImplementedError('Implement Me')
+
