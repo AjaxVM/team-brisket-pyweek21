@@ -37,6 +37,12 @@ class LevelLoader(object):
     def parseConfig(self):
         config = json.loads(open(self.config_path, 'rb').read())
         self.level_name = config["levelName"]
+        # Determines if the level is single, coop or competitive
+        self.level_type = config["levelType"]
+        # Determines which background will be used
+        self.level_background = config["background"]
+        # Determines if this will use cavern, indoor, outdoor or w/e tiles
+        self.level_theme = config["theme"]
 
     def parseImage(self):
         self.image = pygame.image.load(self.image_path)
