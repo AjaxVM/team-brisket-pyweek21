@@ -15,12 +15,9 @@ def run_game():
     log.info('Starting game factory')
     server = Process(target=server_process)
     server.start()
-
     try:
         ZombieClientFactory()
     finally:
-        # This is only if instantiating the factory fails
-        # After twisted starts, we won't get here
         server.terminate()
 
 def run_server():
