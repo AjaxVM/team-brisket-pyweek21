@@ -12,16 +12,20 @@ log = logging.getLogger(__name__)
 
 def run_game():
     log.info('Starting server')
-    server = Process(target=server_process)
-    server.start()
-    try:
-        log.info('Starting pygame')
-        factory = ZombieClientFactory()
-        reactor.connectTCP('localhost', 10543, factory)
-        reactor.run()
+    # server = Process(target=server_process)
+    # server.start()
+    # try:
+    #     log.info('Starting game factory')
+    #     factory = ZombieClientFactory()
+    #     reactor.connectTCP('localhost', 10543, factory)
+    #     reactor.run()
 
-    finally:
-        server.terminate()  # not great longterm
+    # finally:
+    #     server.terminate()  # not great longterm
+
+    log.info('Starting game factory')
+    factory = ZombieClientFactory()
+    reactor.run()
 
 def run_server():
     server_process()
