@@ -122,8 +122,6 @@ class ZombieClientFactory(protocol.ClientFactory):
             #just in case so we don't have the orphaned server
             self.game_client.stopLocalServer()
 
-        # self.game_client.connect()
-
     def buildProtocol(self, addr):
         p = ZombieClientProtocol(self.game_client)
         p.factory = self
