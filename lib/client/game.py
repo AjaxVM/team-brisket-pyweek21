@@ -5,6 +5,8 @@ from .. import settings
 from ..shared import constants
 from twisted.internet import reactor
 
+from .states import main_menu, play_game
+
 log = logging.getLogger(__name__)
 
 
@@ -14,11 +16,12 @@ class Game(object):
 
         self.game_client = None
 
-        self.movement_actions = [
-            constants.PLAYER_MOVE_RIGHT,
-            constants.PLAYER_MOVE_LEFT,
-            constants.PLAYER_MOVE_JUMP
-        ]
+        self.states = {
+            'main_menu': main_menu.State,
+            'play_game': play_game.State
+        }
+        self.current_state = None
+        self.state_obj = None
 
     def setup(self, game_client):
         log.info('Initializing Game')
@@ -30,38 +33,32 @@ class Game(object):
         pygame.display.set_caption(settings.GAME_TITLE)
 
     def destroy(self):
-        log.info('Tearing down Game')
         if self.is_running:
+            log.info('Tearing down Game')
             self.is_running = False
             pygame.quit()
 
-    def doAction(self, action):
-        if action in self.movement_actions:
-            self.game_client.command(action)
+    def forceQuit(self):
+        self.destroy()
+        self.game_client.stop()
 
-    def handleEvents(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.game_client.stop()
-                return
-            elif event.type == pygame.KEYDOWN:
-                log.info('Got Key Event: '+str(event))
-                if event.key == pygame.K_ESCAPE:
-                    self.game_client.stop()
-                    return
-
-                elif event.key in settings.CONTROLS:
-                    self.doAction(settings.CONTROLS[event.key])
-
-    def render(self):
-        self.screen.fill((0,0,0))
+    def gotoState(self, state):
+        if self.state_obj:
+            self.state_obj.leave()
+        self.current_state = state
+        self.state_obj = self.states[self.current_state](self)
 
     def gameLoop(self):
-        self.handleEvents()
+        if not self.current_state:
+            self.gotoState('main_menu')
+
+        self.state_obj.handleEvents(pygame.event.get())
 
         if not self.is_running:
             return #make sure we don't try to render again :O
 
-        self.render()
+        self.screen.fill((0,0,0))
+
+        self.state_obj.render()
 
         pygame.display.flip()
