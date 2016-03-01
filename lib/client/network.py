@@ -1,9 +1,13 @@
 from twisted.internet import protocol
 from twisted.internet import reactor
+from twisted.internet import defer
 from ..shared.protocol import JsonReceiver
 from .. import settings
 from .game import Game
 import logging
+
+from multiprocessing import Process
+from ..server.network import server_process
 
 log = logging.getLogger(__name__)
 
@@ -26,6 +30,8 @@ class GameClient(object):
 
         self.command_queue = []
 
+        self.local_server = None
+
     def command(self, command, **kwargs):
         self.command_queue.append({
             'command': command,
@@ -44,10 +50,25 @@ class GameClient(object):
         self.ticking = False
         self.game.destroy()
         reactor.stop()
+        self.stopLocalServer()
 
     def connect(self):
         log.info('Connecting to server')
         self.connection = reactor.connectTCP('localhost', settings.DEFAULT_PORT, self.factory)
+
+    def stopLocalServer(self):
+        log.info('Stopping local server')
+        if self.local_server:
+            self.local_server.terminate()
+            self.local_server = None
+
+    def startLocalServer(self):
+        log.info('Starting local server')
+        if self.local_server:
+            self.stopLocalServer()
+
+        self.local_server = Process(target=server_process)
+        self.local_server.start()
 
     def disconnect(self):
         log.info('Disconnecting from server')
@@ -63,7 +84,7 @@ class GameClient(object):
             if self.client:
                 self.client.sendCommand('commands', commands=self.command_queue)
             else:
-                print 'WTF???'
+                log.warn('Not connected to server')
             self.command_queue = []
 
     def tick(self):
@@ -97,9 +118,11 @@ class ZombieClientFactory(protocol.ClientFactory):
         game = Game()
 
         self.game_client = GameClient(game, self)
-        self.game_client.start()
-
-        self.game_client.connect()
+        try:
+            self.game_client.start()
+        finally:
+            #just in case so we don't have the orphaned server
+            self.game_client.stopLocalServer()
 
     def buildProtocol(self, addr):
         p = ZombieClientProtocol(self.game_client)
