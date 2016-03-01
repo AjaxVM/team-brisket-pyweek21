@@ -1,3 +1,12 @@
+Requirements:
+Twisted 15.0.X
+zope.interface 4.1.X
+pygame 1.9.X
+simplejson 3.8.X
+
+
+
+
 TODO!!!
 
 Need to briefly mention license, and direct to LICENSE.txt for details.

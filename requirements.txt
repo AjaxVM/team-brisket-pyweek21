@@ -1,4 +1,0 @@
-Twisted>=15.0.0
-zope.interface>=4.1.0,<4.1.99
-pygame>=1.9.1,<1.9.99
-simplejson==3.8.2
