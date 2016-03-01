@@ -9,57 +9,80 @@ log = logging.getLogger(__name__)
 
 
 class ZombieProtocol(JsonReceiver):
+    """ Handles communication with one client """
 
-    def __init__(self, game_server, players):
+    def __init__(self, game_server, router):
         self.game_server = game_server
-        self.players = players
+        self.router = router
         self.slot = None
 
     def connectionMade(self):
         peer = self.transport.getPeer()
-        log.debug("Connection made from {0}:{1}".format(peer.host, peer.port))
-
-        if len(self.players) >= settings.NUMBER_OF_PLAYERS:
+        try:
+            self.slot = self.router.addPlayer(protocol=self)
+        except ServerFull:
+            log.error('Rejected {0}:{1} because server is full'.format(peer.host, peer.port))
             self.sendLine('No slots currently open on this server. Bye.')
             self.transport.loseConnection()
+        self.game_server.playerJoin(self.slot)
+        log.info("Connection made from {0}:{1} to slot {2}".format(peer.host, peer.port, self.slot))
 
-        self.slot = self.factory.addPlayer()
-        log.info('Slot {0} is now occupied'.format(self.slot))
-        
     def connectionLost(self, reason=None):
-        if self.slot is not None:
-            log.info('Slot {0} is now free'.format(self.slot))
-        self.factory.removePlayer(self.slot)
+        self.router.removePlayer(self.slot)
         peer = self.transport.getPeer()
-        log.debug("Connection lost from {0}:{1}".format(peer.host, peer.port))
+        log.info("Connection lost from {0}:{1} to slot {2}".format(peer.host, peer.port, self.slot))
 
     def objectReceived(self, obj):
-        log.info('Server received: {0}'.format(obj))
+        log.debug('Server received: {0}'.format(obj))
         
 
 class ZombieFactory(Factory):
+    """ Creates protocol objects """
 
-    def __init__(self, game_server):
+    def __init__(self, game_server, router):
         self.game_server = game_server
-        self.players = {}
-                     
+        self.router = router
+
     def buildProtocol(self, addr):
-        log.info('Remote addr: {}'.format(addr))
-        p = ZombieProtocol(self.game_server, self.players)
-        p.factory = self
-        return p
-        
-    def addPlayer(self):
-        slot = next(i for i in xrange(1, settings.NUMBER_OF_PLAYERS + 1) if i not in self.players)
-        self.players[slot] = 1 #TODO - name players
+        return ZombieProtocol(self.game_server, self.router)
+
+
+class ZombieRouter(object):
+    """ Keeps track of clients and lets the server message them """
+
+    def __init__(self):
+        self.clients = {}
+
+    def addPlayer(self, protocol):
+        try:
+            slot = next(i for i in xrange(1, settings.NUMBER_OF_PLAYERS + 1) if i not in self.clients)
+        except StopIteration:
+            raise ServerFull()
+        self.clients[slot] = protocol
         return slot
-                    
-                     
+
     def removePlayer(self, slot):
-        self.players.pop(slot, None)
-    
+        self.clients.pop(slot, None)
+
+    def sendTo(self, slot, obj):
+        self.clients[slot].sendObject(obj)
+
+    def broadcast(self, obj):
+        for player in self.clients.values():
+            player.sendObject(obj)
+
+    def empty(self):
+        return len(self.clients) == 0
+
+
+class ServerFull(Exception):
+    pass
+
+
+
 def server_process():
     from twisted.internet import reactor
     log.debug('Twisted listening on port {}'.format(settings.DEFAULT_PORT))
-    reactor.listenTCP(settings.DEFAULT_PORT, ZombieFactory(GameServer()))
+    router = ZombieRouter()
+    reactor.listenTCP(settings.DEFAULT_PORT, ZombieFactory(GameServer(router), router))
     reactor.run()
