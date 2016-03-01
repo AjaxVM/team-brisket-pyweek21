@@ -1,15 +1,24 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import logging.config
 import os
+from pygame.locals import * #this is potentially a little cluttery but allows us to define constants for controls
+from .shared import constants
 
 
 GAME_TITLE = "Zombie Brisket"
-WINDOW_SIZE = (600, 600)
-FPS = 60
+WINDOW_SIZE = (640, 480)
+FPS = 30
+NETWORK_FPS = 10 #how many times a second we send stuff to server
 DEFAULT_PORT = 10543
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
 
 NUMBER_OF_PLAYERS = 2
+
+CONTROLS = {
+    K_LEFT: constants.PLAYER_MOVE_LEFT,
+    K_RIGHT: constants.PLAYER_MOVE_RIGHT,
+    K_z: constants.PLAYER_MOVE_JUMP
+}
 
 LOGGING = {
     'version': 1,

@@ -10,31 +10,58 @@ log = logging.getLogger(__name__)
 
 class Game(object):
 
-    def __init__(self, screen):
-        self.screen = screen
-        self.background = pygame.Surface(settings.WINDOW_SIZE)
+    def __init__(self):
+
+        self.game_client = None
+
+        self.movement_actions = [
+            constants.PLAYER_MOVE_RIGHT,
+            constants.PLAYER_MOVE_LEFT,
+            constants.PLAYER_MOVE_JUMP
+        ]
+
+    def setup(self, game_client):
+        log.info('Initializing Game')
+        self.game_client = game_client
+
+        pygame.init()
         self.is_running = True
-        self.state = constants.STATE_ACTION  #todo actually implement state
-
-    def start(self):
-        self.background.fill(pygame.Color('#000000'))
-        reactor.callLater(0.1, self.tick)
-
-    def tick(self):
+        self.screen = pygame.display.set_mode(settings.WINDOW_SIZE)
         pygame.display.set_caption(settings.GAME_TITLE)
-        self.screen.blit(self.background, (0, 0))
+
+    def destroy(self):
+        log.info('Tearing down Game')
+        if self.is_running:
+            self.is_running = False
+            pygame.quit()
+
+    def doAction(self, action):
+        if action in self.movement_actions:
+            self.game_client.command(action)
+
+    def handleEvents(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.is_running = False
+                self.game_client.stop()
                 return
             elif event.type == pygame.KEYDOWN:
+                log.info('Got Key Event: '+str(event))
                 if event.key == pygame.K_ESCAPE:
-                    self.is_running = False
+                    self.game_client.stop()
                     return
-                self.userInputReceived(event.key)
-        pygame.display.update()
-        if self.is_running:
-            reactor.callLater(0.1, self.tick)
 
-    def bindToClient(self, userInputReceived):
-        self.userInputReceived = userInputReceived
+                elif event.key in settings.CONTROLS:
+                    self.doAction(settings.CONTROLS[event.key])
+
+    def render(self):
+        self.screen.fill((0,0,0))
+
+    def gameLoop(self):
+        self.handleEvents()
+
+        if not self.is_running:
+            return #make sure we don't try to render again :O
+
+        self.render()
+
+        pygame.display.flip()
