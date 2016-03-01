@@ -1,26 +1,26 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from collections import namedtuple
+from itertools import count
 
+ENTITY_ID_SEQ = count()
 
 Vec = namedtuple('Vec', ['x', 'y'])
-Bbox = namedtuple('Bbox', ['x', 'y', 'x2', 'y2'])
+
+# Point is center bottom. hwidth is half width and height is full height
+Bbox = namedtuple('Bbox', ['x', 'y', 'hwidth', 'height'])
 
 
 def bbox_collides(a, b):
     return not (
-        a.x > b.x2
-        or a.y > b.y2
-        or a.x2 < b.x
-        or a.y2 < b.y
+        a.x + a.hwidth < b.x - b.hwidth
+        or b.x + b.hwidth < a.x - a.hwidth
+        or a.y + a.height < b.y
+        or b.y + b.height < a.y
     )
 
 
-def width_height(bbox):
-    return Vec(bbox.x2 - bbox.x, bbox.y2 - bbox.y)
-
-
 def move_bbox(bbox, vec):
-    return Bbox(bbox.x + vec.x, bbox.y + vec.y, bbox.x2 + vec.x, bbox.y2 + vec.y)
+    return Bbox(bbox.x + vec.x, bbox.y + vec.y, bbox.hwidth, bbox.height)
 
 
 class Entity(object):
@@ -29,6 +29,10 @@ class Entity(object):
         self.alive = False
         self.bbox = Bbox(0, 0, 0, 0)
         self.velocity = Vec(0, 0)
+        self.__hash = next(ENTITY_ID_SEQ)
 
     def __repr__(self):
-        return "<{0} x{1.x} y{1.y} w{2.x} h{2.y} vx{3.x} vy{3.y}>".format(self.__class__.__name__, self.bbox, width_height(self.bbox), self.velocity)
+        return "<{0} x{1.x} y{1.y} hw{1.hwidth} h{1.height} vx{3.x} vy{3.y}>".format(self.__class__.__name__, self.bbox, self.velocity)
+
+    def __hash__(self):
+        return self.__hash
