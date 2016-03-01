@@ -1,10 +1,8 @@
 from twisted.internet import protocol
 from twisted.internet import reactor
 from ..shared.protocol import JsonReceiver
-from ..shared import constants
 from .. import settings
 from .game import Game
-import pygame
 import logging
 
 log = logging.getLogger(__name__)
