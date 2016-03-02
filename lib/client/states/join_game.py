@@ -12,12 +12,6 @@ class State(BaseState):
 
     def __init__(self, game):
         super(State, self).__init__(game)
-        self.options = [
-            ('Host / Single Player', self.doSingleplayer),
-            ('Join Server', self.doJoinServer),
-            ('Quit', self.doQuit),
-        ]
-        self.current_option = 0
         self.font = pygame.font.Font(os.path.join(DATA_DIR, 'fonts/ShadowsIntoLight.ttf'), 26)
 
     def currentOptionExecute(self):
@@ -32,7 +26,8 @@ class State(BaseState):
         self.game.gotoState('play_game')
 
     def doJoinServer(self):
-        self.game.gotoState('join_game')
+        self.game.game_client.connect()
+        self.game.gotoState('play_game')
 
     def handleEvents(self, events):
         for event in events:
@@ -41,28 +36,9 @@ class State(BaseState):
                 return
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.doQuit()
-                    return
-
-                elif event.key == pygame.K_DOWN:
-                    self.current_option += 1
-                    if self.current_option >= len(self.options):
-                        self.current_option = 0
-                elif event.key == pygame.K_UP:
-                    self.current_option -= 1
-                    if self.current_option < 0:
-                        self.current_option = len(self.options)-1
-                elif event.key == pygame.K_RETURN:
-                    self.currentOptionExecute()
+                    self.game.gotoState('main_menu')
                     return
 
     def render(self):
         self.game.screen.blit(self.font.render(GAME_TITLE, True, (244, 100, 70)), (10, 10))
-        posx = 50
-        posy = 100
-        for i, (name, func) in enumerate(self.options):
-            color = (255,255,255)
-            if i == self.current_option:
-                color = (0,255,0)
-            self.game.screen.blit(self.font.render(name, True, color), (posx, posy))
-            posy += 50
+
