@@ -1,7 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pygame
+import os
+from collections import OrderedDict
 from .state import BaseState
+from ...settings import DATA_DIR, GAME_TITLE
+from .base_menu import render_menu_bg, outlined_text, CRAP_LOADER
 
 #create a menu object that will accept arrow up and enter to perform actions
 
@@ -9,28 +13,17 @@ class State(BaseState):
 
     def __init__(self, game):
         super(State, self).__init__(game)
-
-        self.options = {
-            'Singleplayer [Hosts server and plays]': self.doSingleplayer,
-            'Join Server [expects a server is running @ localhost]': self.doJoinServer,
-            'Quit': self.doQuit
-        }
-
-        self.option_keys = [
-            'Singleplayer [Hosts server and plays]',
-            'Join Server [expects a server is running @ localhost]',
-            'Quit'
+        self.options = [
+            ('Host / Single Player', self.doSingleplayer),
+            ('Join a Friend', self.doJoinServer),
+            ('Quit', self.doQuit),
         ]
-
         self.current_option = 0
-
-        self.font = pygame.font.Font(None, 26)
-
-    def currentOption(self):
-        return self.option_keys[self.current_option]
+        self.font = CRAP_LOADER['menu_font']
 
     def currentOptionExecute(self):
-        self.options[self.currentOption()]()
+        name, func = self.options[self.current_option]
+        func()
 
     def doQuit(self):
         self.game.forceQuit()
@@ -40,8 +33,7 @@ class State(BaseState):
         self.game.gotoState('play_game')
 
     def doJoinServer(self):
-        self.game.game_client.connect()
-        self.game.gotoState('play_game')
+        self.game.gotoState('join_game')
 
     def handleEvents(self, events):
         for event in events:
@@ -55,24 +47,23 @@ class State(BaseState):
 
                 elif event.key == pygame.K_DOWN:
                     self.current_option += 1
-                    if self.current_option >= len(self.option_keys):
+                    if self.current_option >= len(self.options):
                         self.current_option = 0
                 elif event.key == pygame.K_UP:
                     self.current_option -= 1
                     if self.current_option < 0:
-                        self.current_option = len(self.option_keys)-1
+                        self.current_option = len(self.options)-1
                 elif event.key == pygame.K_RETURN:
                     self.currentOptionExecute()
                     return
 
     def render(self):
+        render_menu_bg(self.game.screen)
         posx = 50
         posy = 100
-        for i in self.option_keys:
+        for i, (name, func) in enumerate(self.options):
             color = (255,255,255)
-            if i == self.currentOption():
+            if i == self.current_option:
                 color = (0,255,0)
-            self.game.screen.blit(self.font.render(i, True, color), (posx, posy))
+            outlined_text(self.game.screen, self.font, name, color, posx, posy)
             posy += 50
-
-

@@ -5,7 +5,7 @@ from .. import settings
 from ..shared import constants
 from twisted.internet import reactor
 
-from .states import main_menu, play_game
+from .states import main_menu, play_game, join_game
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +18,8 @@ class Game(object):
 
         self.states = {
             'main_menu': main_menu.State,
-            'play_game': play_game.State
+            'join_game': join_game.State,
+            'play_game': play_game.State,
         }
         self.current_state = None
         self.state_obj = None
