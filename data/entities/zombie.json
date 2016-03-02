@@ -1,5 +1,6 @@
 {
 	"alive": true,
+	"health": 5,
 	"hitBox_x": 0,
 	"hitBox_y": 0,
 	"hitBox_hWidth": 1,
@@ -7,6 +8,6 @@
 	"vec_x": 0,
 	"vex_y": 0,
 	"state": "idle",
-	"resource": "test_image.png"
+	"resource": "zombie.json"
 }
 
