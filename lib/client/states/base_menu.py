@@ -23,7 +23,7 @@ CRAP_LOADER = CrapLoader()
 
 def render_menu_bg(screen):
     screen.blit(CRAP_LOADER['menu_bg'], (0, 0))
-    outlined_text(screen, CRAP_LOADER['menu_font'], GAME_TITLE, COLOR_TITLE, 10, 10)
+    outlined_text(screen, CRAP_LOADER['menu_font'], GAME_TITLE, COLOR_TITLE, 40, 10)
 
 
 def outlined_text(screen, font, text, color, x, y):

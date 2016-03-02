@@ -5,7 +5,7 @@ import os
 from collections import OrderedDict
 from .state import BaseState
 from ...settings import DATA_DIR, GAME_TITLE
-from .base_menu import render_menu_bg
+from .base_menu import render_menu_bg, outlined_text
 
 #create a menu object that will accept arrow up and enter to perform actions
 
@@ -65,5 +65,5 @@ class State(BaseState):
             color = (255,255,255)
             if i == self.current_option:
                 color = (0,255,0)
-            self.game.screen.blit(self.font.render(name, True, color), (posx, posy))
+            outlined_text(self.game.screen, self.font, name, color, posx, posy)
             posy += 50
