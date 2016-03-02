@@ -2,9 +2,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import pygame
 import os
-from collections import OrderedDict
 from .state import BaseState
-from ...settings import DATA_DIR, GAME_TITLE
+from ...settings import DATA_DIR
+from .base_menu import render_menu_bg
 
 #create a menu object that will accept arrow up and enter to perform actions
 
@@ -40,5 +40,4 @@ class State(BaseState):
                     return
 
     def render(self):
-        self.game.screen.blit(self.font.render(GAME_TITLE, True, (244, 100, 70)), (10, 10))
-
+        render_menu_bg(self.game.screen)
