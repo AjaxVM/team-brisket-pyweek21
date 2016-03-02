@@ -15,15 +15,17 @@ class CrapLoader(dict):
             width, height = bg.get_size()
             bg = pygame.transform.scale(bg, (width * 5, height * 5))
             return bg
-        elif key == 'menu_font':
+        elif key == 'title_font':
             return pygame.font.Font(os.path.join(DATA_DIR, 'fonts/ShadowsIntoLight.ttf'), 50)
+        elif key == 'menu_font':
+            return pygame.font.Font(os.path.join(DATA_DIR, 'fonts/ShadowsIntoLight.ttf'), 30)
 
 CRAP_LOADER = CrapLoader()
 
 
 def render_menu_bg(screen):
     screen.blit(CRAP_LOADER['menu_bg'], (0, 0))
-    outlined_text(screen, CRAP_LOADER['menu_font'], GAME_TITLE, COLOR_TITLE, 40, 10)
+    outlined_text(screen, CRAP_LOADER['title_font'], GAME_TITLE, COLOR_TITLE, 40, 10)
 
 
 def outlined_text(screen, font, text, color, x, y):

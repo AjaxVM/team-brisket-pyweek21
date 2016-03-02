@@ -5,7 +5,7 @@ import os
 from collections import OrderedDict
 from .state import BaseState
 from ...settings import DATA_DIR, GAME_TITLE
-from .base_menu import render_menu_bg, outlined_text
+from .base_menu import render_menu_bg, outlined_text, CRAP_LOADER
 
 #create a menu object that will accept arrow up and enter to perform actions
 
@@ -15,11 +15,11 @@ class State(BaseState):
         super(State, self).__init__(game)
         self.options = [
             ('Host / Single Player', self.doSingleplayer),
-            ('Join Server', self.doJoinServer),
+            ('Join a Friend', self.doJoinServer),
             ('Quit', self.doQuit),
         ]
         self.current_option = 0
-        self.font = pygame.font.Font(os.path.join(DATA_DIR, 'fonts/ShadowsIntoLight.ttf'), 26)
+        self.font = CRAP_LOADER['menu_font']
 
     def currentOptionExecute(self):
         name, func = self.options[self.current_option]
