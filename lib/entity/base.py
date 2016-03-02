@@ -1,7 +1,5 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import json
-
 from collections import namedtuple
 from itertools import count
 
@@ -12,31 +10,6 @@ Vec = namedtuple('Vec', ['x', 'y'])
 # Point is center bottom. hwidth is half width and height is full height
 Bbox = namedtuple('Bbox', ['x', 'y', 'hwidth', 'height'])
 
-
-def process_json(json_to_parse):
-    new_bbox = Bbox(
-        json_to_parse.get('hitBox_x'),
-        json_to_parse.get('hitBox_y'),
-        json_to_parse.get('hitBox_hWidth'),
-        json_to_parse.get('hitBox_height')
-    )
-    new_vec = Vec(
-        json_to_parse.get('vex_x'),
-        json_to_parse.get('vex_y')
-    )
-
-    entity = Entity(
-        json_to_parse.get('alive'),
-        new_bbox,
-        new_vec,
-        json_to_parse.get('state')
-    )
-
-    graphic = GraphicalEntity(json_to_parse.get('resource'))
-
-    return [entity, graphic]
-
-
 def bbox_collides(a, b):
     return not (
         a.x + a.hwidth < b.x - b.hwidth
@@ -45,15 +18,15 @@ def bbox_collides(a, b):
         or b.y + b.height < a.y
     )
 
-
 def move_bbox(bbox, vec):
     return Bbox(bbox.x + vec.x, bbox.y + vec.y, bbox.hwidth, bbox.height)
 
 
 class Entity(object):
 
-    def __init__(self, alive=False, bbox=Bbox(0, 0, 0, 0), velocity=Vec(0, 0), state=''):
+    def __init__(self, alive=False, health=0, bbox=Bbox(0, 0, 0, 0), velocity=Vec(0, 0), state=''):
         self.alive = alive
+        self.health = health
         self.bbox = bbox
         self.velocity = velocity
         self.state = state
@@ -74,6 +47,7 @@ class Entity(object):
 
     def state_repr(self):
         raise NotImplementedError('Implement Me')
+
 
 class GraphicalEntity(object):
 
