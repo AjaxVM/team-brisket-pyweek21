@@ -7,8 +7,8 @@ class Resource(Object):
     but you can use any of the functions in this class to
     work with the resource properties.
     '''
-    image_cache: {}
-    resource_props: {
+    image_cache = {}
+    resource_props = {
         # example for now
         # zombie: {
         #     image: '',
@@ -17,18 +17,18 @@ class Resource(Object):
         #         walking_2: (0,32)
         #     }
         # },
-        hostile_planet: {
-            image: 'data/assets/hostile_planet_tileset.png',
-            tiles: {
-                red_rock_top_left: (0,0),
-                red_rock_top: (32,0),
-                red_rock_top_right: (64,0),
-                red_rock_left: (0,32),
-                red_rock: (32,32),
-                red_rock_right: (64,32),
-                red_rock_bot_left: (64,0),
-                red_rock_bot: (64,32),
-                red_rock_bot_right: (64,64)
+        'hostile_planet': {
+            'image': 'data/assets/hostile_planet_tileset.png',
+            'tiles': {
+                'red_rock_top_left': (0,0),
+                'red_rock_top': (32,0),
+                'red_rock_top_right': (64,0),
+                'red_rock_left': (0,32),
+                'red_rock': (32,32),
+                'red_rock_right': (64,32),
+                'red_rock_bot_left': (64,0),
+                'red_rock_bot': (64,32),
+                'red_rock_bot_right': (64,64)
             }
         }
     }
@@ -39,7 +39,7 @@ class Resource(Object):
 
     def get_resource_tile_props(self, name, tile_name)
         ''' Grabs tile properties for a specific resource from resource properties. '''
-        return get_resource_props(name)[tile_name]
+        return get_resource_props(name).tiles[tile_name]
 
     def load_image(self, name):
         ''' Loads an image. '''
@@ -54,9 +54,10 @@ class Resource(Object):
         full_name = name + tile_name
         ''' Loads a tile from an image. '''
         if not image_cache[full_name]:
+            tile_props_tuple = get_resource_tile_props(name, tile_name)
             image_cache[full_name] = pygame.transform.chop(
                 load_image(name),
-                pygame.Rect(get_resource_tile_props(name, tile_name)
+                pygame.Rect(tile_props_tuple[0], tile_props_tuple[1], 32, 32)
             )
 
         return image_cache[full_name]
