@@ -53,6 +53,15 @@ def move_bbox(bbox, vec):
 
 class Entity(object):
 
+    '''
+    The base entity logic that all entities should be derived from
+    alive = alive or dead boolean
+    bbox = the hit box of the entity
+    velocity = well you know...
+    state = string state of entity (examples idle, walking, running)
+    resource = path to image for entity
+    is_enviornment = boolean is this entity a wall or floor or is it a thing that moves
+    '''
     def __init__(
         self,
         alive=False,
