@@ -6,6 +6,8 @@ from collections import OrderedDict
 from .state import BaseState
 from ...settings import DATA_DIR, GAME_TITLE
 from .base_menu import render_menu_bg, outlined_text, CRAP_LOADER
+from ...sound.music import set_track
+from ...sound.fx import playfx
 
 #create a menu object that will accept arrow up and enter to perform actions
 
@@ -20,8 +22,11 @@ class State(BaseState):
         ]
         self.current_option = 0
         self.font = CRAP_LOADER['menu_font']
+        set_track('bjorn__lynne-_the_sinister_maze_.mid')
+
 
     def currentOptionExecute(self):
+        playfx('click.wav')
         name, func = self.options[self.current_option]
         func()
 

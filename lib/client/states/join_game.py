@@ -5,6 +5,8 @@ import os
 from .state import BaseState
 from ...settings import DATA_DIR, DEFAULT_PORT
 from .base_menu import render_menu_bg, CRAP_LOADER, outlined_text
+from ...sound.music import set_track
+
 
 #create a menu object that will accept arrow up and enter to perform actions
 
@@ -13,6 +15,7 @@ class State(BaseState):
     def __init__(self, game):
         super(State, self).__init__(game)
         self.ip_entry = IPEntry(50, 150)
+        set_track('bjorn__lynne-_the_sinister_maze_.mid')
 
     def doJoinServer(self):
         self.game.game_client.connect(self.ip_entry.text)
