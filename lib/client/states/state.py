@@ -28,3 +28,6 @@ class BaseState(object):
                 if event.key == pygame.K_ESCAPE:
                     self.game.forceQuit()
                     return
+
+    def objectReceived(self, obj):
+        pass

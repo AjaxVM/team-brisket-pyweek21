@@ -101,7 +101,7 @@ class ZombieClientProtocol(JsonReceiver):
         self.sendObject(command=command, params=kwargs)
 
     def objectReceived(self, obj):
-        print(obj)
+        self.game_client.game.objectReceived(obj)
 
 
 class ZombieClientFactory(protocol.ClientFactory):
