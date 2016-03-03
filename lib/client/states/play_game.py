@@ -5,6 +5,9 @@ from .state import BaseState
 from ... import settings
 from ...shared import constants
 from ...sound.music import set_track
+from ...world.world import World
+from ...entity.ball import Ball
+from ...entity.base import Bbox
 
 import logging
 log = logging.getLogger(__name__)
@@ -23,6 +26,7 @@ class State(BaseState):
         ]
 
         set_track('bjorn__lynne-_no_survivors_.mid')
+        self.world = World()
 
     def backToMenu(self):
         self.game.game_client.disconnect()
@@ -47,6 +51,13 @@ class State(BaseState):
                     self.doAction(settings.CONTROLS[event.key])
 
     def render(self):
-        pass
+        for entity in self.world.entities.itervalues():
+            pygame.draw.circle(self.game.screen, (255, 0, 0), (int(entity.bbox.x), int(entity.bbox.y)), 5)
 
-
+    def objectReceived(self, obj):
+        # hardcoded hack for now
+        for id, data in obj.iteritems():
+            entity = self.world.entities.get(id)
+            if entity is None:
+                entity = self.world.entities[id] = Ball(0, 0, 0, 0)
+            self.world.entities[id].bbox = Bbox(data['x'], data['y'], entity.bbox.hwidth, entity.bbox.height)
