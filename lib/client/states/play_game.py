@@ -4,6 +4,7 @@ import pygame
 from .state import BaseState
 from ... import settings
 from ...shared import constants
+from ...sound.music import set_track
 
 import logging
 log = logging.getLogger(__name__)
@@ -20,6 +21,8 @@ class State(BaseState):
             constants.PLAYER_MOVE_LEFT,
             constants.PLAYER_MOVE_JUMP
         ]
+
+        set_track('bjorn__lynne-_no_survivors_.mid')
 
     def backToMenu(self):
         self.game.game_client.disconnect()

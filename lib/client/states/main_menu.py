@@ -22,11 +22,11 @@ class State(BaseState):
         ]
         self.current_option = 0
         self.font = CRAP_LOADER['menu_font']
-        set_track('COD.mid')
+        set_track('bjorn__lynne-_the_sinister_maze_.mid')
 
 
     def currentOptionExecute(self):
-        playfx('pop1.wav')
+        playfx('click.wav')
         name, func = self.options[self.current_option]
         func()
 

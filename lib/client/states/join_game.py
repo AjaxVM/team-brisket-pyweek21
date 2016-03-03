@@ -15,7 +15,7 @@ class State(BaseState):
     def __init__(self, game):
         super(State, self).__init__(game)
         self.ip_entry = IPEntry(50, 150)
-        set_track('COD.mid')
+        set_track('bjorn__lynne-_the_sinister_maze_.mid')
 
     def doJoinServer(self):
         self.game.game_client.connect(self.ip_entry.text)
