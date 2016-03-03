@@ -50,9 +50,9 @@ class GameClient(object):
         self.game.destroy()
         reactor.stop()
 
-    def connect(self):
+    def connect(self, host='localhost'):
         log.info('Connecting to server')
-        self.connection = reactor.connectTCP('localhost', settings.DEFAULT_PORT, self.factory)
+        self.connection = reactor.connectTCP(host, settings.DEFAULT_PORT, self.factory)
 
     def disconnect(self):
         log.info('Disconnecting from server')
