@@ -1,20 +1,20 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from .base import Entity as BaseEntity, Vec, Bbox, move_bbox
+from .base import Entity as BaseEntity, Vec
+import pygame
 
 class Entity(BaseEntity):
 
-    hWidth = 5.0
-    height = 10.0
+    radius = 5
 
     def __init__(self, x, y, vx, vy):
         super(Entity, self).__init__()
-        self.bbox = Bbox(x, y, self.hWidth, self.height)
+        self.rect = pygame.Rect(x,y,self.radius*2, self.radius*2)
         self.velocity = Vec(vx, vy)
 
     def get_next_state(self):
         return dict(
-            bbox=move_bbox(self.bbox, self.velocity)
+            rect = self.rect.move(*self.velocity)
         )
 
     def get_fail_state(self):
@@ -24,8 +24,8 @@ class Entity(BaseEntity):
 
     def state_repr(self):
         return dict(
-            x=self.bbox.x,
-            y=self.bbox.y,
+            x=self.rect.centerx,
+            y=self.rect.bottom,
             vx=self.velocity.x,
             vy=self.velocity.y
         )

@@ -10,7 +10,6 @@ import logging
 log = logging.getLogger(__name__)
 
 from ...entity.entities import PlayerEntity
-from ...entity.base import Bbox
 
 #state for playing the game
 
@@ -59,7 +58,7 @@ class State(BaseState):
         screen = self.game.screen
         draw_tilebox(screen, 'hostile_planet', 'red_rock', 10, 10, 8, 8)
         for entity_id, entity in self.entities.iteritems():
-            RESOURCE.blit(screen, 'hostile_planet', 'plant2', entity.bbox.x, entity.bbox.y + 300)
+            RESOURCE.blit(screen, 'hostile_planet', 'plant2', entity.rect)
 
     def objectReceived(self, obj):
         # TODO way to distinguish different things the server sends, right now we're assuming its entity positions
@@ -67,9 +66,9 @@ class State(BaseState):
             entity = self.entities.get(entity_id)
             if entity is None:
                 entity = self.entities[entity_id] = PlayerEntity(0)  # note: we are't sending the slot down either?
-            newx = data.get('x', entity.bbox.x)
-            newy = data.get('y', entity.bbox.y)
-            entity.bbox = Bbox(newx, newy, entity.bbox.hwidth, entity.bbox.height)
+            newx = data.get('x', entity.rect.centerx)
+            newy = data.get('y', entity.rect.bottom)
+            entity.rect.midbottom = (newx, newy)
 
 
 def draw_tilebox(screen, tileset, base_name, sx, sy, width_tiles, height_tiles):
@@ -82,7 +81,7 @@ def draw_tilebox(screen, tileset, base_name, sx, sy, width_tiles, height_tiles):
 
 
 def _draw_tilebox_row(screen, tileset, base_name, sx, sy, width_tiles, left_name, mid_name, right_name):
-    RESOURCE.blit(screen, tileset, base_name + left_name, sx, sy)
+    RESOURCE.blit(screen, tileset, base_name + left_name, (sx, sy))
     for i in xrange(1, width_tiles - 1):
-        RESOURCE.blit(screen, tileset, base_name + mid_name, sx + i * 24, sy)
-    RESOURCE.blit(screen, tileset, base_name + right_name, sx + (width_tiles - 1) * 24, sy)
+        RESOURCE.blit(screen, tileset, base_name + mid_name, (sx + i * 24, sy))
+    RESOURCE.blit(screen, tileset, base_name + right_name, (sx + (width_tiles - 1) * 24, sy))

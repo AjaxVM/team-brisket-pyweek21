@@ -12,7 +12,7 @@ from .. import settings
 
 class SoundCache(dict):
     def __missing__(self, sound_name):
-        sound = pygame.mixer.Sound(file=os.path.join(settings.DATA_DIR, 'music', sound_name))
+        sound = pygame.mixer.Sound(os.path.join(settings.DATA_DIR, 'music', sound_name))
         options = [sound]
         if not has_array:
             return options

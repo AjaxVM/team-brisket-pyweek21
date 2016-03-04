@@ -4,12 +4,13 @@ import pygame
 import os, json
 import logging
 from .. import settings
+from ..shared import constants
 
 log = logging.getLogger(__name__)
 
 #CONSTANTS
-LEVEL_GRID_WIDTH = 32
-LEVEL_GRID_HEIGHT = 32
+# LEVEL_GRID_WIDTH = 32
+# LEVEL_GRID_HEIGHT = 32
 
 LEVEL_GRID_COLOR_MAP = {
     '255,255,255': 'nothing', #this should never show up
@@ -47,7 +48,7 @@ class LevelLoader(object):
         #also, these represent the coordinates of the center of the tiles
         self.grid_elements = []
         self.grid_size = self.image.get_size()
-        self.level_bounds = (0, 0, self.grid_size[0]*LEVEL_GRID_WIDTH, self.grid_size[1]*LEVEL_GRID_HEIGHT)
+        self.level_bounds = (0, 0, self.grid_size[0]*constants.LEVEL_GRID_WIDTH, self.grid_size[1]*constants.LEVEL_GRID_HEIGHT)
 
         for x in xrange(self.grid_size[0]):
             for y in xrange(self.grid_size[1]):
@@ -56,8 +57,8 @@ class LevelLoader(object):
                 if color == '255,255,255':
                     continue
                 self.grid_elements.append((LEVEL_GRID_COLOR_MAP[color],
-                                           (int((pos[0]+0.5)*LEVEL_GRID_WIDTH),
-                                            int((self.grid_size[1]-pos[1]-0.5)*LEVEL_GRID_HEIGHT)
+                                           (int((pos[0]+0.5)*constants.LEVEL_GRID_WIDTH),
+                                            int((self.grid_size[1]-pos[1]-0.5)*constants.LEVEL_GRID_HEIGHT)
                                            )))
 
         log.info(self.grid_elements)

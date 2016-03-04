@@ -2,47 +2,49 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os
 from .. import settings
-from .base import Entity as BaseEntity, Bbox, Vec
+from .base import Entity as BaseEntity, Vec
 from ..shared import constants
+import pygame
 
 class ZombieEntity(BaseEntity):
 
     def __init__(self):
-        alive=True
-        bbox=Bbox(0, 0, 0, 0)
-        velocity=Vec(0, 0)
-        resource = os.path.join(settings.DATA_DIR, 'assets', 'entities', 'zombie.png')
-        is_enviornment=False
-        super(ZombieEntity, self).__init__(alive, bbox, velocity, resource, is_enviornment)
+        alive = True
+        rect = pygame.Rect(0,0,0,0)
+
+        velocity = Vec(0, 0)
+        resource = 'zombie'
+        is_enviornment = False
+        super(ZombieEntity, self).__init__(alive,  rect, velocity, resource, is_enviornment)
 
 
 class PlayerEntity(BaseEntity):
 
     def __init__(self, slot):
         alive=True
-        bbox=Bbox(0, 0, 0, 0)
+        rect = pygame.Rect(0,0,0,0)
         velocity=Vec(0, 0)
-        resource = os.path.join(settings.DATA_DIR, 'assets', 'entities', 'testplayer.png')
+        resource = 'player'
         is_enviornment=False
         self.slot = slot
-        super(PlayerEntity, self).__init__(alive, bbox, velocity, resource, is_enviornment)
+        super(PlayerEntity, self).__init__(alive, rect, velocity, resource, is_enviornment)
 
     def get_position_from_player_actions(self, actions):
-        transition_bbox = self.bbox
+        transition_rect = self.rect.copy()
         if constants.PLAYER_MOVE_RIGHT in actions:
-            transition_bbox = Bbox(transition_bbox.x + 1, transition_bbox.y, transition_bbox.hwidth, transition_bbox.height)
+            transition_rect.move_ip(1,0)
         if constants.PLAYER_MOVE_LEFT in actions:
-            transition_bbox = Bbox(transition_bbox.x - 1, transition_bbox.y, transition_bbox.hwidth, transition_bbox.height)
+            transition_rect.move_ip(-1,0)
         if constants.PLAYER_MOVE_JUMP in actions:
-            transition_bbox = Bbox(transition_bbox.x, transition_bbox.y - 5, transition_bbox.hwidth, transition_bbox.height)
+            transition_rect.move_ip(0,5)
         return dict(
-            bbox=transition_bbox
+            rect=transition_rect
         )
 
     def state_repr(self):
         return dict(
-            x=self.bbox.x,
-            y=self.bbox.y
+            x = self.rect.centerx,
+            y = self.rect.bottom
         )
             
 
@@ -51,9 +53,9 @@ class WallEntity(BaseEntity):
 
     def __init__(self):
         alive=False,
-        bbox=Bbox(0, 0, 0, 0),
+        rect = pygame.Rect(0,0,0,0)
         velocity=Vec(0, 0),
-        resource='path/to/image.png',
+        resource='wall',
         is_enviornment=True
-        super(WallEntity, self).__init__(alive, bbox, velocity, resource, is_enviornment)
+        super(WallEntity, self).__init__(alive, rect, velocity, resource, is_enviornment)
 
