@@ -63,3 +63,8 @@ class Game(object):
         self.state_obj.render()
 
         pygame.display.flip()
+
+    def objectReceived(self, obj):
+        if self.state_obj:
+            self.state_obj.objectReceived(obj)
+
