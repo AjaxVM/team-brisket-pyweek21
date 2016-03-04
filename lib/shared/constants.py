@@ -10,3 +10,4 @@ STATE_ACTION = 3
 PLAYER_MOVE_RIGHT = 'move_right'
 PLAYER_MOVE_LEFT = 'move_left'
 PLAYER_MOVE_JUMP = 'jump'
+PLAYER_IDLE = 'idle'

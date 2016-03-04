@@ -26,3 +26,6 @@ class JsonReceiver(basic.LineOnlyReceiver):
         if kwargs is not None:
             dict.update(kwargs)
         self.sendLine(json.dumps(dict))
+
+    def sendRawObject(self, obj):
+        self.sendLine(json.dumps(obj))

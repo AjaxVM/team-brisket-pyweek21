@@ -5,8 +5,11 @@ import json
 from .level_loader import LevelLoader
 from twisted.application import service
 from twisted.internet import reactor
-from ..entity import ball
+from ..entity import entities
 from ..entity.base import bbox_collides
+from .. import settings
+from ..shared import constants
+from collections import deque
 
 
 log = logging.getLogger(__name__)
@@ -18,18 +21,20 @@ class GameServer(service.Service):
         self.router = router
         self.is_running = True
         self.level = LevelLoader('level1')
+
+        self.action_buffer = {
+            i: deque() for i in xrange(1, settings.NUMBER_OF_PLAYERS + 1)
+        }
+
+        self.fps = 1.0 / settings.FPS
         
-        self.entities = [
-            ball.Entity(
-                random.uniform(0, 640),
-                random.uniform(0, 480),
-                random.uniform(-5, 5),
-                random.uniform(-5, 5)
-            )
-            for _ in xrange(10)
-        ]
+        self.entities = []
+        self.player_entity_hashes = {}
 
     def playerJoin(self, slot):
+        player_entity = entities.PlayerEntity(slot=slot)
+        self.player_entity_hashes[hash(player_entity)] = slot
+        self.entities.append(player_entity)
         self.start()
 
     def playerLeave(self, slot):
@@ -50,7 +55,16 @@ class GameServer(service.Service):
 
         failures = {}
 
-        potential_entity_states = {hash(entity): entity.get_next_state() for entity in self.entities}
+        potential_entity_states = {}
+        for entity in self.entities:
+            key = hash(entity)
+            if key in self.player_entity_hashes:
+                slot = self.player_entity_hashes[key]
+                player_actions = self.action_buffer[slot].popleft() if self.action_buffer[slot] else []
+                potential_entity_states[key] = entity.get_position_from_player_actions(player_actions)
+                log.debug('slot {} now at {}'.format(slot, potential_entity_states[key]))
+            else:
+                potential_entity_states[key] = entity.get_next_state()
 
         for key_a, entity_a in potential_entity_states.iteritems():
             for key_b, entity_b in potential_entity_states.iteritems():
@@ -68,6 +82,10 @@ class GameServer(service.Service):
                                                             
         self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
 
-
         if self.is_running:
             reactor.callLater(1.0 / 30, self.tick)
+
+    def push_actions(self, slot, actions):
+        log.debug('received {} from client'.format(json.dumps(actions)))
+        self.action_buffer[slot].extend(actions)
+        
