@@ -101,7 +101,11 @@ class ZombieClientProtocol(JsonReceiver):
         self.sendObject(command=command, params=kwargs)
 
     def objectReceived(self, obj):
-        print(obj)
+        try:
+            self.game_client.game.objectReceived(obj)
+        except:
+            # Twisted swallows exceptions?
+            log.exception('client objectReceived:')
 
 
 class ZombieClientFactory(protocol.ClientFactory):

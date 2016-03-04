@@ -29,6 +29,7 @@ class Resource(object):
                 'red_rock_bot_left': (0, 24),
                 'red_rock_bot': (9, 24),
                 'red_rock_bot_right': (24, 24),
+                'plant2': (16, 78, 18, 18),
             }
         }
     }
@@ -51,8 +52,10 @@ class Resource(object):
         """ Loads a tile from an image. """
         full_name = name + tile_name
         if full_name not in self.image_cache:
-            x, y = self.get_resource_tile_props(name, tile_name)
-            self.image_cache[full_name] = self.load_image(name).subsurface(x, y, 24, 24)
+            coords = self.get_resource_tile_props(name, tile_name)
+            if len(coords) == 2:
+                coords += (24, 24)
+            self.image_cache[full_name] = self.load_image(name).subsurface(*coords)
         return self.image_cache[full_name]
 
     def get_resource_image(self, name, tile_name):

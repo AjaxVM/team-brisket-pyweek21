@@ -9,6 +9,9 @@ from ...sound.music import set_track
 import logging
 log = logging.getLogger(__name__)
 
+from ...entity.entities import PlayerEntity
+from ...entity.base import Bbox
+
 #state for playing the game
 
 from ..resource import Resource
@@ -25,6 +28,8 @@ class State(BaseState):
             constants.PLAYER_MOVE_LEFT,
             constants.PLAYER_MOVE_JUMP
         ]
+
+        self.entities = {}  # for now
 
         set_track('bjorn__lynne-_no_survivors_.mid')
 
@@ -53,6 +58,18 @@ class State(BaseState):
     def render(self):
         screen = self.game.screen
         draw_tilebox(screen, 'hostile_planet', 'red_rock', 10, 10, 8, 8)
+        for entity_id, entity in self.entities.iteritems():
+            RESOURCE.blit(screen, 'hostile_planet', 'plant2', entity.bbox.x, entity.bbox.y + 300)
+
+    def objectReceived(self, obj):
+        # TODO way to distinguish different things the server sends, right now we're assuming its entity positions
+        for entity_id, data in obj.iteritems():
+            entity = self.entities.get(entity_id)
+            if entity is None:
+                entity = self.entities[entity_id] = PlayerEntity(0)  # note: we are't sending the slot down either?
+            newx = data.get('x', entity.bbox.x)
+            newy = data.get('y', entity.bbox.y)
+            entity.bbox = Bbox(newx, newy, entity.bbox.hwidth, entity.bbox.height)
 
 
 def draw_tilebox(screen, tileset, base_name, sx, sy, width_tiles, height_tiles):
