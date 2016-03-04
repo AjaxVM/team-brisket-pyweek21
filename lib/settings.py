@@ -4,6 +4,7 @@ import os
 from pygame.locals import * #this is potentially a little cluttery but allows us to define constants for controls
 from .shared import constants
 
+CLIENT_ENTITY_PREFIX = 'client_'
 
 GAME_TITLE = "Zombie Brisket"
 WINDOW_SIZE = (640, 480)

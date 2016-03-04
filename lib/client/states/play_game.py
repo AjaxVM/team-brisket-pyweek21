@@ -30,7 +30,7 @@ class State(BaseState):
 
     def doAction(self, action):
         if action in self.movement_actions:
-            self.game.game_client.command(action)
+            self.game.game_client.command('move', action=action)
 
     def handleEvents(self, events):
         for event in events:

@@ -85,7 +85,13 @@ class Entity(object):
     def __hash__(self):
         return self.__hash
 
-    def tick(self):
+    def set_next_state(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+    def get_next_state(self):
+        raise NotImplementedError('Implement Me')
+
+    def get_fail_state(self):
         raise NotImplementedError('Implement Me')
 
     def state_repr(self):

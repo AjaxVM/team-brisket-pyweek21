@@ -32,10 +32,10 @@ class GameClient(object):
         self.command_queue = []
 
     def command(self, command, **kwargs):
-        self.command_queue.append({
-            'command': command,
-            'kwargs': kwargs
-        });
+        obj = {}
+        obj.update({'command': command})
+        obj.update(kwargs)
+        self.command_queue.append(obj);
 
     def start(self):
         log.info('Started GameClient')
@@ -66,7 +66,7 @@ class GameClient(object):
     def processEvents(self):
         if self.command_queue:
             if self.client:
-                self.client.sendCommand('commands', commands=self.command_queue)
+                self.client.sendRawObject(self.command_queue)
             else:
                 log.warn('Not connected to server')
             self.command_queue = []

@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from ..shared.protocol import JsonReceiver
 from twisted.internet.protocol import Factory
 import logging
+import json
 from .. import settings
 from .game import GameServer
 
@@ -33,7 +34,12 @@ class ZombieProtocol(JsonReceiver):
         log.info("Connection lost from {0}:{1} to slot {2}".format(peer.host, peer.port, self.slot))
 
     def objectReceived(self, obj):
-        log.debug('Server received: {0}'.format(obj))
+        log.debug(json.dumps(obj))
+        move_actions = []
+        for command in obj:
+            if command['command'] == 'move':
+                move_actions.append(command['action'])
+        self.game_server.push_actions(self.slot, move_actions)
         
 
 class ZombieFactory(Factory):
