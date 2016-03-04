@@ -50,9 +50,12 @@ class State(BaseState):
                 if event.key == pygame.K_ESCAPE:
                     self.backToMenu()
                     return
-
                 elif event.key in settings.CONTROLS:
                     self.doAction(settings.CONTROLS[event.key])
+        held_keys = pygame.key.get_pressed()
+        for key, action in settings.HELD_CONTROLS.iteritems():
+            if held_keys[key]:
+                self.doAction(action)
 
     def render(self):
         screen = self.game.screen
