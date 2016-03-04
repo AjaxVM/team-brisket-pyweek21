@@ -1,5 +1,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+LEVEL_GRID_WIDTH = 24
+LEVEL_GRID_HEIGHT = 24
+
+
 #TODO: do we need these now?
 STATE_INTRO = 1
 STATE_WAITING = 2

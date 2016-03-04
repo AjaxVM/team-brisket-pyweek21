@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json
+import pygame
 
 from collections import namedtuple
 from itertools import count
@@ -8,48 +9,6 @@ from itertools import count
 ENTITY_ID_SEQ = count()
 
 Vec = namedtuple('Vec', ['x', 'y'])
-
-# Point is center bottom. hwidth is half width and height is full height
-Bbox = namedtuple('Bbox', ['x', 'y', 'hwidth', 'height'])
-
-
-# Moving entities to classes may not use this
-# def process_json(json_to_parse):
-#     new_bbox = Bbox(
-#         json_to_parse.get('hitBox_x'),
-#         json_to_parse.get('hitBox_y'),
-#         json_to_parse.get('hitBox_hWidth'),
-#         json_to_parse.get('hitBox_height')
-#     )
-#     new_vec = Vec(
-#         json_to_parse.get('vex_x'),
-#         json_to_parse.get('vex_y')
-#     )
-
-#     entity = Entity(
-#         json_to_parse.get('alive'),
-#         new_bbox,
-#         new_vec,
-#         json_to_parse.get('state')
-#     )
-
-#     graphic = GraphicalEntity(json_to_parse.get('resource'))
-
-#     return [entity, graphic]
-
-
-def bbox_collides(a, b):
-    return not (
-        a.x + a.hwidth < b.x - b.hwidth
-        or b.x + b.hwidth < a.x - a.hwidth
-        or a.y + a.height < b.y
-        or b.y + b.height < a.y
-    )
-
-
-def move_bbox(bbox, vec):
-    return Bbox(bbox.x + vec.x, bbox.y + vec.y, bbox.hwidth, bbox.height)
-
 
 class Entity(object):
 
@@ -65,14 +24,14 @@ class Entity(object):
     def __init__(
         self,
         alive=False,
-        bbox=Bbox(0, 0, 0, 0),
+        rect=pygame.Rect(0,0,0,0),
         velocity=Vec(0, 0),
         state='',
         resource='',
         is_enviornment=False
     ):
         self.alive = alive
-        self.bbox = bbox
+        self.rect = rect
         self.velocity = velocity
         self.state = state
         self.resource = resource

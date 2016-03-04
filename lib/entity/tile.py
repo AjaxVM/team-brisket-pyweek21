@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from .base import Entity as BaseEntity, Bbox
+from .base import Entity as BaseEntity#, Bbox
+from ..shared import constants
 
 class Entity(BaseEntity):
 
@@ -9,7 +10,7 @@ class Entity(BaseEntity):
 
     def __init__(self, x, y, vx, vy):
         super(Entity, self).__init__()
-        self.bbox = Bbox(x, y, self.hWidth, self.height)
+        self.rect = pygame.Rect(x,y,constants.LEVEL_GRID_WIDTH,constants.LEVEL_GRID_HEIGHT)
 
     def get_next_state(self):
         return dict()
@@ -19,6 +20,6 @@ class Entity(BaseEntity):
 
     def state_repr(self):
         return dict(
-            x=self.bbox.x,
-            y=self.bbox.y,
+            x=self.rect.centerx,
+            y=self.bbox.bottom
         )

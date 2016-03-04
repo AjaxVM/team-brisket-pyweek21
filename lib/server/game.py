@@ -6,7 +6,7 @@ from .level_loader import LevelLoader
 from twisted.application import service
 from twisted.internet import reactor
 from ..entity import entities
-from ..entity.base import bbox_collides
+# from ..entity.base import bbox_collides
 from .. import settings
 from ..shared import constants
 from collections import deque
@@ -69,7 +69,7 @@ class GameServer(service.Service):
         for key_a, entity_a in potential_entity_states.iteritems():
             for key_b, entity_b in potential_entity_states.iteritems():
                 if key_a < key_b:
-                    if bbox_collides(entity_a['bbox'], entity_b['bbox']):
+                    if entity_a.rect.colliderect(entity_b.rect):
                         log.debug('collision detected')
                         failures[key_b] = 1
 
