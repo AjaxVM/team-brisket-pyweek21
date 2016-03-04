@@ -61,5 +61,5 @@ class Resource(object):
     def get_resource_image(self, name, tile_name):
         return self.load_tile(name, tile_name)
 
-    def blit(self, screen, name, tile_name, x, y):
-        screen.blit(self.get_resource_image(name, tile_name), (x, y))
+    def blit(self, screen, name, tile_name, coord):
+        screen.blit(self.get_resource_image(name, tile_name), coord)

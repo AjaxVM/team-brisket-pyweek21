@@ -81,7 +81,7 @@ def draw_tilebox(screen, tileset, base_name, sx, sy, width_tiles, height_tiles):
 
 
 def _draw_tilebox_row(screen, tileset, base_name, sx, sy, width_tiles, left_name, mid_name, right_name):
-    RESOURCE.blit(screen, tileset, base_name + left_name, sx, sy)
+    RESOURCE.blit(screen, tileset, base_name + left_name, (sx, sy))
     for i in xrange(1, width_tiles - 1):
-        RESOURCE.blit(screen, tileset, base_name + mid_name, sx + i * 24, sy)
-    RESOURCE.blit(screen, tileset, base_name + right_name, sx + (width_tiles - 1) * 24, sy)
+        RESOURCE.blit(screen, tileset, base_name + mid_name, (sx + i * 24, sy))
+    RESOURCE.blit(screen, tileset, base_name + right_name, (sx + (width_tiles - 1) * 24, sy))
