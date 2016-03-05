@@ -38,7 +38,6 @@ class GameServer(service.Service):
         level = LevelLoader(name)
 
         for ent in level.grid_elements:
-            print(1)
             #TODO: handle the proper resource from ent[0]
             posx,posy = ent[1]
             posy = settings.GAME_SIZE[1]-posy
