@@ -31,7 +31,11 @@ class State(BaseState):
 
         self.entities = {}  # for now
 
-        self.my_screen = pygame.Surface(settings.GAME_SIZE)
+        w, h = settings.WINDOW_SIZE
+        self.level_surface = pygame.Surface((w * 5, h / 2))
+        self.view_surface = pygame.Surface((w / 2, h / 2))
+        self.viewport = pygame.Rect((0, 0), (w / 2, h / 2))
+        self.player = None
 
         set_track('bjorn__lynne-_no_survivors_.mid')
 
@@ -61,10 +65,18 @@ class State(BaseState):
                 self.doAction(action)
 
     def render(self, screen):
-        self.my_screen.fill((0,0,0))
+        self.level_surface.fill((0, 0, 0))
+        self.view_surface.fill((0, 0, 0))
+        w, h = settings.WINDOW_SIZE
+        w, h = w / 2, h / 2
         for entity_id, entity in self.entities.iteritems():
-            RESOURCE.blit(self.my_screen, entity.tileset, entity.resource, entity.rect)
-        pygame.transform.scale(self.my_screen, (640,480), screen)
+            if entity.rect.colliderect(self.viewport):
+                RESOURCE.blit(self.level_surface, entity.tileset, entity.resource, entity.rect)
+        if self.player is not None:
+            self.viewport.x = self.player.rect.centerx - w / 2
+            self.viewport.y = self.player.rect.centery - h / 2
+        self.view_surface.blit(self.level_surface, (0, 0), self.viewport)
+        pygame.transform.scale(self.view_surface, settings.WINDOW_SIZE, screen)
 
     def objectReceived(self, obj):
         # TODO way to distinguish different things the server sends, right now we're assuming its entity positions
@@ -73,6 +85,9 @@ class State(BaseState):
             if entity is None:
                 klass = getattr(entities, data.pop('c'))
                 entity = self.entities[entity_id] = klass(**data)
+                if self.player is None and isinstance(entity, entities.PlayerEntity):
+                    # TODO we need to know what slot we are
+                    self.player = entity
             newx = data.get('x', entity.rect.centerx)
             newy = data.get('y', entity.rect.bottom)
             entity.rect.midbottom = (newx, newy)
