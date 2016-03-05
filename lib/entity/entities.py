@@ -31,9 +31,9 @@ class PlayerEntity(BaseEntity):
     def get_position_from_player_actions(self, actions):
         transition_rect = self.rect.copy()
         if constants.PLAYER_MOVE_RIGHT in actions:
-            transition_rect.move_ip(1,0)
+            transition_rect.move_ip(2,0)
         if constants.PLAYER_MOVE_LEFT in actions:
-            transition_rect.move_ip(-1,0)
+            transition_rect.move_ip(-2,0)
         if constants.PLAYER_MOVE_JUMP in actions:
             self.velocity = Vec(self.velocity.x, self.velocity.y - 10)
         return {'rect': transition_rect}
