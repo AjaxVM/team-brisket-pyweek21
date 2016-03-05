@@ -19,9 +19,9 @@ class ZombieEntity(BaseEntity):
 
 class PlayerEntity(BaseEntity):
 
-    def __init__(self, slot, x=0, y=0):
+    def __init__(self, slot, x=0, y=0, width=18, height=18):
         alive=True
-        rect = pygame.Rect(x, y, 0, 0)
+        rect = pygame.Rect(x, y, width, height)
         velocity=Vec(0, 0)
         resource = 'plant2'
         is_environment=False
@@ -50,9 +50,9 @@ class PlayerEntity(BaseEntity):
 
 class WallEntity(BaseEntity):
 
-    def __init__(self, x=0, y=0, resource='red_rock'):
+    def __init__(self, x=0, y=0, resource='red_rock', width=24, height=24):
         alive=False
-        rect = pygame.Rect(x, y, 0, 0)
+        rect = pygame.Rect(x, y, width, height)
         velocity=Vec(0, 0)
         resource=resource
         is_environment=True
@@ -63,5 +63,7 @@ class WallEntity(BaseEntity):
             resource = self.resource,
             x = self.rect.centerx,
             y = self.rect.bottom,
+            width = self.rect.width,
+            height = self.rect.height,
             c = self.__class__.__name__
         )

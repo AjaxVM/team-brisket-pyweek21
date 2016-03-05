@@ -92,8 +92,10 @@ class GameServer(service.Service):
                 entity.rect = physics_state
                 for e2 in self.entities:
                     if e2.is_environment and entity.rect.colliderect(e2.rect):
+                        # yet another bad assumption
+                        physics_state.move_ip(physics_state.x, -(physics_state.y + physics_state.height - e2.rect.y))
                         entity.velocity = Vec(entity.velocity.x, 0)
-                                                            
+
         self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
 
         if self.is_running:
