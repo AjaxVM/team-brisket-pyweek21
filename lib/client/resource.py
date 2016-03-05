@@ -31,7 +31,13 @@ class Resource(object):
                 'red_rock_bot_right': (24, 24),
                 'plant2': (16, 78, 18, 18),
                 'exit_door_top_left_1': (204, 64),
-                'exit_door_top_left_2': (204, 88)
+                'exit_door_top_left_2': (204, 88),
+            }
+        },
+        'player_girl1': {
+            'image': 'data/assets/entities/girl_right_gold_hair_1.png',
+            'tiles': {
+                'test_player': (23,4,18,27)
             }
         }
     }

@@ -40,12 +40,13 @@ class ZombieEntity(BaseEntity):
 
 
 class PlayerEntity(BaseEntity):
+    tileset = 'player_girl1'
 
-    def __init__(self, slot, x=0, y=0, width=18, height=18):
+    def __init__(self, slot, x=0, y=0, width=18, height=27):
         alive=True
         rect = pygame.Rect(x, y, width, height)
         velocity=Vec(0, 0)
-        resource = 'plant2'
+        resource = 'test_player'
         is_environment=False
         self.slot = slot
         super(PlayerEntity, self).__init__(alive, rect, velocity, '', resource, is_environment)
