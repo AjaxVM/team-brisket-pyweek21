@@ -6,7 +6,7 @@ from .level_loader import LevelLoader
 from twisted.application import service
 from twisted.internet import reactor
 from ..entity import entities
-# from ..entity.base import bbox_collides
+from ..entity.base import Vec
 from .. import settings
 from ..shared import constants
 from collections import deque
@@ -79,6 +79,18 @@ class GameServer(service.Service):
                 entity.set_next_state(**entity.get_fail_state())
             else:
                 entity.set_next_state(**potential_entity_states[key])
+
+        # physics
+        for entity in self.entities:
+            # gravity
+            if not entity.is_environment:  # don't actually like this
+                entity.velocity = Vec(entity.velocity.x, entity.velocity.y + 1)
+                physics_state = entity.rect.copy()
+                physics_state.move_ip(entity.velocity.x, entity.velocity.y)
+                entity.rect = physics_state
+                for e2 in self.entities:
+                    if e2.is_environment and entity.rect.colliderect(e2.rect):
+                        entity.velocity = Vec(entity.velocity.x, 0)
                                                             
         self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
 

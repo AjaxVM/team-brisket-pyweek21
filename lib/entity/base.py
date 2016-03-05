@@ -28,14 +28,14 @@ class Entity(object):
         velocity=Vec(0, 0),
         state='',
         resource='',
-        is_enviornment=False
+        is_environment=False
     ):
         self.alive = alive
         self.rect = rect
         self.velocity = velocity
         self.state = state
         self.resource = resource
-        self.is_enviornment=is_enviornment
+        self.is_environment=is_environment
         self.__hash = next(ENTITY_ID_SEQ)
 
     def __repr__(self):

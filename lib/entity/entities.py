@@ -14,8 +14,8 @@ class ZombieEntity(BaseEntity):
 
         velocity = Vec(0, 0)
         resource = 'zombie'
-        is_enviornment = False
-        super(ZombieEntity, self).__init__(alive,  rect, velocity, resource, is_enviornment)
+        is_environment = False
+        super(ZombieEntity, self).__init__(alive,  rect, velocity, resource, is_environment)
 
 
 class PlayerEntity(BaseEntity):
@@ -25,9 +25,9 @@ class PlayerEntity(BaseEntity):
         rect = pygame.Rect(0,0,0,0)
         velocity=Vec(0, 0)
         resource = 'player'
-        is_enviornment=False
+        is_environment=False
         self.slot = slot
-        super(PlayerEntity, self).__init__(alive, rect, velocity, resource, is_enviornment)
+        super(PlayerEntity, self).__init__(alive, rect, velocity, resource, is_environment)
 
     def get_position_from_player_actions(self, actions):
         transition_rect = self.rect.copy()
@@ -36,7 +36,7 @@ class PlayerEntity(BaseEntity):
         if constants.PLAYER_MOVE_LEFT in actions:
             transition_rect.move_ip(-1,0)
         if constants.PLAYER_MOVE_JUMP in actions:
-            transition_rect.move_ip(0,5)
+            self.velocity = Vec(self.velocity.x, self.velocity.y - 10)
         return dict(
             rect=transition_rect
         )
@@ -56,6 +56,6 @@ class WallEntity(BaseEntity):
         rect = pygame.Rect(0,0,0,0)
         velocity=Vec(0, 0),
         resource='wall',
-        is_enviornment=True
-        super(WallEntity, self).__init__(alive, rect, velocity, resource, is_enviornment)
+        is_environment=True
+        super(WallEntity, self).__init__(alive, rect, velocity, resource, is_environment)
 

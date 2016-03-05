@@ -16,7 +16,7 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 NUMBER_OF_PLAYERS = 2
 
 CONTROLS = {
-    K_z: constants.PLAYER_MOVE_JUMP
+    K_SPACE: constants.PLAYER_MOVE_JUMP
 }
 
 HELD_CONTROLS = {
