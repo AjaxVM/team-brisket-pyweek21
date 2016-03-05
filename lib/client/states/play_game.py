@@ -32,7 +32,7 @@ class State(BaseState):
         self.viewport = self.view_screen.get_rect()
         self.players = []
 
-        set_track('bjorn__lynne-_no_survivors_.mid')
+        set_track('yolo3.mid')
 
     def backToMenu(self):
         self.game.game_client.disconnect()
