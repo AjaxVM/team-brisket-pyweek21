@@ -31,6 +31,8 @@ class State(BaseState):
 
         self.entities = {}  # for now
 
+        self.my_screen = pygame.Surface((320,240))
+
         set_track('bjorn__lynne-_no_survivors_.mid')
 
     def backToMenu(self):
@@ -59,10 +61,10 @@ class State(BaseState):
                 self.doAction(action)
 
     def render(self):
-        screen = self.game.screen
-        # draw_tilebox(screen, 'hostile_planet', 'red_rock', 10, 10, 8, 8)
+        self.my_screen.fill((0,0,0))
         for entity_id, entity in self.entities.iteritems():
-            RESOURCE.blit(screen, entity.tileset, entity.resource, entity.rect)
+            RESOURCE.blit(self.my_screen, entity.tileset, entity.resource, entity.rect)
+        pygame.transform.scale(self.my_screen, (640,480), self.game.screen)
 
     def objectReceived(self, obj):
         # TODO way to distinguish different things the server sends, right now we're assuming its entity positions
