@@ -30,6 +30,8 @@ class Resource(object):
                 'red_rock_bot': (9, 24),
                 'red_rock_bot_right': (24, 24),
                 'plant2': (16, 78, 18, 18),
+                'exit_door_top_left_1': (204, 64),
+                'exit_door_top_left_2': (204, 88)
             }
         }
     }

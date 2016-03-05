@@ -47,7 +47,6 @@ class PlayerEntity(BaseEntity):
         )
 
 
-
 class WallEntity(BaseEntity):
 
     def __init__(self, x=0, y=0, resource='red_rock', width=24, height=24):
@@ -67,3 +66,46 @@ class WallEntity(BaseEntity):
             height = self.rect.height,
             c = self.__class__.__name__
         )
+
+
+class DoorEntitiyTop(BaseEntity):
+
+    def __init__(self, x=0, y=0, resource='exit_door_top_left_1', width=24, height=24):
+        alive=False
+        rect = pygame.Rect(x, y, width, height)
+        velocity=Vec(0, 0)
+        resource=resource
+        is_environment=True
+        super(DoorEntitiyTop, self).__init__(alive, rect, velocity, '', resource, is_environment)
+
+    def state_repr(self):
+        return dict(
+            resource = self.resource,
+            x = self.rect.centerx,
+            y = self.rect.bottom,
+            width = self.rect.width,
+            height = self.rect.height,
+            c = self.__class__.__name__
+        )
+
+
+class DoorEntitiyBottom(BaseEntity):
+
+    def __init__(self, x=0, y=0, resource='exit_door_top_left_2', width=24, height=24):
+        alive=False
+        rect = pygame.Rect(x, y, width, height)
+        velocity=Vec(0, 0)
+        resource=resource
+        is_environment=True
+        super(DoorEntitiyBottom, self).__init__(alive, rect, velocity, '', resource, is_environment)
+
+    def state_repr(self):
+        return dict(
+            resource = self.resource,
+            x = self.rect.centerx,
+            y = self.rect.bottom,
+            width = self.rect.width,
+            height = self.rect.height,
+            c = self.__class__.__name__
+        )
+

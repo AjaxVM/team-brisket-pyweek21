@@ -20,7 +20,7 @@ class GameServer(service.Service):
     def __init__(self, router):
         self.router = router
         self.is_running = True
-        self.level = LevelLoader('level1')
+        self.level = LevelLoader('level2')
 
         self.action_buffer = {
             i: deque() for i in xrange(1, settings.NUMBER_OF_PLAYERS + 1)
@@ -32,17 +32,18 @@ class GameServer(service.Service):
         self.player_entity_hashes = {}
 
         #TODO: should loadLevel reset entities so we can load more levels, or should this not happen at init?
-        self.loadLevel('level1')
+        self.loadLevel('level2')
 
     def loadLevel(self, name):
         level = LevelLoader(name)
 
         for ent in level.grid_elements:
-            #TODO: handle the proper resource from ent[0]
+            # TODO: handle the proper resource from ent[0]
             posx,posy = ent[1]
             posy = settings.GAME_SIZE[1]-posy
+            print(ent[0])
             self.entities.append(
-                entities.WallEntity(posx, posy)
+                ent[0](posx, posy)
             )
 
     def playerJoin(self, slot):
