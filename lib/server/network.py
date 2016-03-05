@@ -30,6 +30,7 @@ class ZombieProtocol(JsonReceiver):
 
     def connectionLost(self, reason=None):
         self.router.removePlayer(self.slot)
+        self.game_server.playerLeave(self.slot)
         peer = self.transport.getPeer()
         log.info("Connection lost from {0}:{1} to slot {2}".format(peer.host, peer.port, self.slot))
 
