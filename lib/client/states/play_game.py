@@ -79,6 +79,8 @@ class State(BaseState):
         self.view_screen.fill((0,0,0))
         self.move_viewport()
         for entity_id, entity in self.entities.iteritems():
+            if not entity.rect.colliderect(self.viewport):
+                continue
             RESOURCE.blit(self.view_screen,
                           entity.tileset,
                           entity.resource,

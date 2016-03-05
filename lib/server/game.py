@@ -129,10 +129,3 @@ class GameServer(service.Service):
             if e2.is_environment and rect.colliderect(e2.rect):
                 return True
         return False
-
-
-def collide_entities(entities):
-    for i1, e1 in enumerate(entities):
-        for i2, e2 in enumerate(entities):
-            if i2 > i1 and e1.rect.colliderect(e2.rect):
-                yield (e1, e2)
