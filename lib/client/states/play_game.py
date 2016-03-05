@@ -31,7 +31,9 @@ class State(BaseState):
 
         self.entities = {}  # for now
 
-        self.my_screen = pygame.Surface(settings.GAME_SIZE)
+        self.view_screen = pygame.Surface(settings.GAME_SIZE)
+        self.viewport = self.view_screen.get_rect()
+        self.players = []
 
         set_track('bjorn__lynne-_no_survivors_.mid')
 
@@ -60,11 +62,29 @@ class State(BaseState):
             if held_keys[key]:
                 self.doAction(action)
 
+    def move_viewport(self):
+        #set viewportx to center between all players, and bottom to player bottom+one tile size
+        if self.players:
+            x = int(sum(player.rect.centerx for player in self.players) / len(self.players))
+            y = int(sum(player.rect.bottom for player in self.players) / len(self.players)) + constants.LEVEL_GRID_HEIGHT * 2
+            self.viewport.midbottom = (x,y)
+
+            if self.viewport.left < 0:
+                self.viewport.left = 0
+            # TODO: better/more robust way to handle finding the right bounds
+            m = max(entity.rect.right for entity_id, entity in self.entities.iteritems() if not entity in self.players)
+            if self.viewport.right > m:
+                self.viewport.right = m
+
     def render(self):
-        self.my_screen.fill((0,0,0))
+        self.view_screen.fill((0,0,0))
+        self.move_viewport()
         for entity_id, entity in self.entities.iteritems():
-            RESOURCE.blit(self.my_screen, entity.tileset, entity.resource, entity.rect)
-        pygame.transform.scale(self.my_screen, (640,480), self.game.screen)
+            RESOURCE.blit(self.view_screen,
+                          entity.tileset,
+                          entity.resource,
+                          entity.rect.move((-self.viewport.left, -self.viewport.top)))
+        pygame.transform.scale(self.view_screen, settings.WINDOW_SIZE, self.game.screen)
 
     def objectReceived(self, obj):
         # TODO way to distinguish different things the server sends, right now we're assuming its entity positions
@@ -73,6 +93,8 @@ class State(BaseState):
             if entity is None:
                 klass = getattr(entities, data.pop('c'))
                 entity = self.entities[entity_id] = klass(**data)
+                if isinstance(entity, entities.PlayerEntity) and not any(hash(player) == entity_id for player in self.players):
+                    self.players.append(entity)
             newx = data.get('x', entity.rect.centerx)
             newy = data.get('y', entity.rect.bottom)
             entity.rect.midbottom = (newx, newy)
