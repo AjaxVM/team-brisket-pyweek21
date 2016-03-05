@@ -31,7 +31,7 @@ class ZombieEntity(BaseEntity):
             self.pause -= 1
             return {'rect': self.rect}
         if random.randint(0, 60) == 0 and game.on_surface(self):
-            self.velocity = Vec(self.velocity.x, self.velocity.y - 11)
+            self.velocity = Vec(self.velocity.x, self.velocity.y - 16)
         elif random.randint(0, 100) == 1:
             self.pause = random.randint(20, 50)
         return {

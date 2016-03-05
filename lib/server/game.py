@@ -45,7 +45,7 @@ class GameServer(service.Service):
 
     def playerJoin(self, slot):
         self.start()
-        player_entity = entities.PlayerEntity(slot=slot)
+        player_entity = entities.PlayerEntity(slot=slot, x=slot * 24 + 24, y=0)
         self.player_entity_hashes[hash(player_entity)] = slot
         self.entities.append(player_entity)
         self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
@@ -90,14 +90,14 @@ class GameServer(service.Service):
             new_rect = new_state.get('rect', entity.rect)
             # First collide on the entity's action
             for e2 in entity_list:
-                if e2.is_environment and new_rect.colliderect(e2.rect):
+                if does_collide(entity, e2) and new_rect.colliderect(e2.rect):
                     new_rect = entity.rect
                     break
             entity.rect = new_rect
             # Next collide the physics vector
             new_rect = new_rect.move(entity.velocity.x, entity.velocity.y)
             for e2 in entity_list:
-                if e2.is_environment and new_rect.colliderect(e2.rect):
+                if does_collide(entity, e2) and new_rect.colliderect(e2.rect):
                     # Work backward from new_rect to one that doesn't collide
                     # For now we only have gravity so doing this without the x component as a hack
                     sign = -1 if new_rect.y > entity.rect.y else 1
@@ -123,6 +123,10 @@ class GameServer(service.Service):
     def on_surface(self, entity):
         rect = entity.rect.move(0, 1)
         for e2 in self.entities:
-            if e2.is_environment and rect.colliderect(e2.rect):
+            if does_collide(entity, e2) and rect.colliderect(e2.rect):
                 return True
         return False
+
+
+def does_collide(e1, e2):
+    return e1 != e2 and (e1.is_environment or e2.is_environment or (type(e1) is entities.PlayerEntity and type(e2) is entities.PlayerEntity))
