@@ -41,11 +41,11 @@ class GameServer(service.Service):
 
         # Hardcoded zombies for now
         for i in range(3):
-            self.entities.append(entities.ZombieEntity(0, 0))
+            self.entities.append(entities.ZombieEntity(32, 0))
 
     def playerJoin(self, slot):
         self.start()
-        player_entity = entities.PlayerEntity(slot=slot, x=slot * 24 + 24, y=0)
+        player_entity = entities.PlayerEntity(slot=slot, x=slot * 24 + 48, y=0)
         self.player_entity_hashes[hash(player_entity)] = slot
         self.entities.append(player_entity)
         self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
