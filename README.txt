@@ -12,6 +12,7 @@ Releasing as public domain. Check LICENSE.txt for assets.
 Game is supposed to be a post-apocalyptic coop platform where you run from zombies.
 Since we ran out of time we have more of a coop jump on people’s heads and chase flying plants thing.
 Have fun, if you can!
+Oh, and the brisket totally didn’t make it into the game - we ate it instead.
 
 
 TIPS:
