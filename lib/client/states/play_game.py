@@ -66,7 +66,7 @@ class State(BaseState):
         #set viewportx to center between all players, and bottom to player bottom+one tile size
         if self.players:
             x = int(sum(player.rect.centerx for player in self.players) / len(self.players))
-            y = int(sum(player.rect.bottom for player in self.players) / len(self.players)) + constants.LEVEL_GRID_HEIGHT
+            y = int(sum(player.rect.bottom for player in self.players) / len(self.players)) + constants.LEVEL_GRID_HEIGHT * 2
             self.viewport.midbottom = (x,y)
 
             if self.viewport.left < 0:
