@@ -6,7 +6,7 @@ from .level_loader import LevelLoader
 from twisted.application import service
 from twisted.internet import reactor
 from ..entity import entities
-# from ..entity.base import bbox_collides
+from ..entity.base import Vec
 from .. import settings
 from ..shared import constants
 from collections import deque
@@ -28,7 +28,9 @@ class GameServer(service.Service):
 
         self.fps = 1.0 / settings.FPS
         
-        self.entities = []
+        self.entities = [
+            entities.WallEntity(x * 24, 200) for x in range(10)
+        ]
         self.player_entity_hashes = {}
 
     def playerJoin(self, slot):
@@ -66,10 +68,10 @@ class GameServer(service.Service):
             else:
                 potential_entity_states[key] = entity.get_next_state()
 
-        for key_a, entity_a in potential_entity_states.iteritems():
-            for key_b, entity_b in potential_entity_states.iteritems():
+        for key_a, state_a in potential_entity_states.iteritems():
+            for key_b, state_b in potential_entity_states.iteritems():
                 if key_a < key_b:
-                    if entity_a.rect.colliderect(entity_b.rect):
+                    if state_a['rect'].colliderect(state_b['rect']):
                         log.debug('collision detected')
                         failures[key_b] = 1
 
@@ -79,7 +81,21 @@ class GameServer(service.Service):
                 entity.set_next_state(**entity.get_fail_state())
             else:
                 entity.set_next_state(**potential_entity_states[key])
-                                                            
+
+        # physics
+        for entity in self.entities:
+            # gravity
+            if not entity.is_environment:  # don't actually like this
+                entity.velocity = Vec(entity.velocity.x, min(15, entity.velocity.y + 1))
+                physics_state = entity.rect.copy()
+                physics_state.move_ip(entity.velocity.x, entity.velocity.y)
+                entity.rect = physics_state
+                for e2 in self.entities:
+                    if e2.is_environment and entity.rect.colliderect(e2.rect):
+                        # yet another bad assumption
+                        physics_state.move_ip(0, -(physics_state.y + physics_state.height - e2.rect.y))
+                        entity.velocity = Vec(entity.velocity.x, 0)
+
         self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
 
         if self.is_running:

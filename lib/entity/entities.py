@@ -11,51 +11,59 @@ class ZombieEntity(BaseEntity):
     def __init__(self):
         alive = True
         rect = pygame.Rect(0,0,0,0)
-
         velocity = Vec(0, 0)
-        resource = 'zombie'
-        is_enviornment = False
-        super(ZombieEntity, self).__init__(alive,  rect, velocity, resource, is_enviornment)
+        resource = 'plant2'
+        is_environment = False
+        super(ZombieEntity, self).__init__(alive,  rect, velocity, '', resource, is_environment)
 
 
 class PlayerEntity(BaseEntity):
 
-    def __init__(self, slot):
+    def __init__(self, slot, x=0, y=0, width=18, height=18):
         alive=True
-        rect = pygame.Rect(0,0,0,0)
+        rect = pygame.Rect(x, y, width, height)
         velocity=Vec(0, 0)
-        resource = 'player'
-        is_enviornment=False
+        resource = 'plant2'
+        is_environment=False
         self.slot = slot
-        super(PlayerEntity, self).__init__(alive, rect, velocity, resource, is_enviornment)
+        super(PlayerEntity, self).__init__(alive, rect, velocity, '', resource, is_environment)
 
     def get_position_from_player_actions(self, actions):
         transition_rect = self.rect.copy()
         if constants.PLAYER_MOVE_RIGHT in actions:
-            transition_rect.move_ip(1,0)
+            transition_rect.move_ip(2,0)
         if constants.PLAYER_MOVE_LEFT in actions:
-            transition_rect.move_ip(-1,0)
+            transition_rect.move_ip(-2,0)
         if constants.PLAYER_MOVE_JUMP in actions:
-            transition_rect.move_ip(0,5)
-        return dict(
-            rect=transition_rect
-        )
+            self.velocity = Vec(self.velocity.x, self.velocity.y - 10)
+        return {'rect': transition_rect}
 
     def state_repr(self):
         return dict(
+            slot = self.slot,
             x = self.rect.centerx,
-            y = self.rect.bottom
+            y = self.rect.bottom,
+            c = self.__class__.__name__
         )
-            
+
 
 
 class WallEntity(BaseEntity):
 
-    def __init__(self):
-        alive=False,
-        rect = pygame.Rect(0,0,0,0)
-        velocity=Vec(0, 0),
-        resource='wall',
-        is_enviornment=True
-        super(WallEntity, self).__init__(alive, rect, velocity, resource, is_enviornment)
+    def __init__(self, x=0, y=0, resource='red_rock', width=24, height=24):
+        alive=False
+        rect = pygame.Rect(x, y, width, height)
+        velocity=Vec(0, 0)
+        resource=resource
+        is_environment=True
+        super(WallEntity, self).__init__(alive, rect, velocity, '', resource, is_environment)
 
+    def state_repr(self):
+        return dict(
+            resource = self.resource,
+            x = self.rect.centerx,
+            y = self.rect.bottom,
+            width = self.rect.width,
+            height = self.rect.height,
+            c = self.__class__.__name__
+        )

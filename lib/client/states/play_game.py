@@ -5,6 +5,7 @@ from .state import BaseState
 from ... import settings
 from ...shared import constants
 from ...sound.music import set_track
+from ...entity import entities
 
 import logging
 log = logging.getLogger(__name__)
@@ -59,16 +60,17 @@ class State(BaseState):
 
     def render(self):
         screen = self.game.screen
-        draw_tilebox(screen, 'hostile_planet', 'red_rock', 10, 10, 8, 8)
+        # draw_tilebox(screen, 'hostile_planet', 'red_rock', 10, 10, 8, 8)
         for entity_id, entity in self.entities.iteritems():
-            RESOURCE.blit(screen, 'hostile_planet', 'plant2', entity.rect)
+            RESOURCE.blit(screen, entity.tileset, entity.resource, entity.rect)
 
     def objectReceived(self, obj):
         # TODO way to distinguish different things the server sends, right now we're assuming its entity positions
         for entity_id, data in obj.iteritems():
             entity = self.entities.get(entity_id)
             if entity is None:
-                entity = self.entities[entity_id] = PlayerEntity(0)  # note: we are't sending the slot down either?
+                klass = getattr(entities, data.pop('c'))
+                entity = self.entities[entity_id] = klass(**data)
             newx = data.get('x', entity.rect.centerx)
             newy = data.get('y', entity.rect.bottom)
             entity.rect.midbottom = (newx, newy)
