@@ -42,11 +42,16 @@ class GameServer(service.Service):
                 ent[0](posx, posy)
             )
 
+        # Hardcoded zombies for now
+        for i in range(3):
+            self.entities.append(entities.ZombieEntity(0, 0))
+
     def playerJoin(self, slot):
         self.start()
         player_entity = entities.PlayerEntity(slot=slot)
         self.player_entity_hashes[hash(player_entity)] = slot
         self.entities.append(player_entity)
+        self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
 
     def playerLeave(self, slot):
         if self.router.empty():
@@ -57,7 +62,7 @@ class GameServer(service.Service):
             self.is_running = True
             self.entities = []
             self.player_entity_hashes = {}
-            self.loadLevel('level1')
+            self.loadLevel('level2')
             reactor.callLater(1.0 / 30, self.tick)
             log.debug('Starting server game loop')
 
@@ -66,52 +71,51 @@ class GameServer(service.Service):
         log.debug('Stopping server game loop')
 
     def tick(self):
+        entity_list = self.entities
+        updated = []
 
-        failures = {}
+        # Apply gravity
+        for entity in entity_list:
+            entity.velocity = Vec(entity.velocity.x, min(15, entity.velocity.y + 1))
 
-        potential_entity_states = {}
-        for entity in self.entities:
-            key = hash(entity)
-            if key in self.player_entity_hashes:
-                slot = self.player_entity_hashes[key]
+        # Movement and collisions
+        for entity in entity_list:
+            orig_rect = entity.rect.copy()
+            if entity.is_environment:
+                # For now environment is immobile
+                continue
+            if type(entity) is entities.PlayerEntity:
+                slot = self.player_entity_hashes[entity]
                 player_actions = self.action_buffer[slot].popleft() if self.action_buffer[slot] else []
-                potential_entity_states[key] = entity.get_position_from_player_actions(player_actions, self)
-                # log.debug('slot {} now at {}'.format(slot, potential_entity_states[key]))
+                new_state = entity.get_position_from_player_actions(player_actions, self)
             else:
-                potential_entity_states[key] = entity.get_next_state()
+                new_state = entity.get_next_state(self)
+            new_rect = new_state.get('rect', entity.rect)
+            # First collide on the entity's action
+            for e2 in entity_list:
+                if e2.is_environment and new_rect.colliderect(e2.rect):
+                    new_rect = entity.rect
+                    break
+            entity.rect = new_rect
+            # Next collide the physics vector
+            new_rect = new_rect.move(entity.velocity.x, entity.velocity.y)
+            for e2 in entity_list:
+                if e2.is_environment and new_rect.colliderect(e2.rect):
+                    # Work backward from new_rect to one that doesn't collide
+                    # For now we only have gravity so doing this without the x component as a hack
+                    sign = -1 if new_rect.y > entity.rect.y else 1
+                    while new_rect.y != entity.rect.y:
+                        new_rect.y += sign
+                        if not new_rect.colliderect(e2.rect):
+                            break
+                    else:
+                        new_rect = entity.rect
+                    entity.velocity = Vec(entity.velocity.x, 0)
+            if new_rect != orig_rect:
+                updated.append(entity)
+            entity.rect = new_rect
 
-        for key_a, state_a in potential_entity_states.iteritems():
-            for key_b, state_b in potential_entity_states.iteritems():
-                if key_a < key_b:
-                    if state_a['rect'].colliderect(state_b['rect']):
-                        log.debug('collision detected')
-                        failures[key_b] = 1
-
-        for entity in self.entities:
-            key = hash(entity)
-            if key in failures:
-                entity.set_next_state(**entity.get_fail_state())
-            else:
-                entity.set_next_state(**potential_entity_states[key])
-
-        # physics
-        for entity in self.entities:
-            # gravity
-            if not entity.is_environment:  # don't actually like this
-                entity.velocity = Vec(entity.velocity.x, min(15, entity.velocity.y + 1))
-                physics_state = entity.rect.copy()
-                physics_state.move_ip(entity.velocity.x, entity.velocity.y)
-                entity.rect = physics_state
-                for e2 in self.entities:
-                    if e2.is_environment and entity.rect.colliderect(e2.rect):
-                        if e2.rect.y > entity.rect.y:
-                            physics_state.move_ip(0, -(physics_state.y + physics_state.height - e2.rect.y))
-                        else:
-                            physics_state.move_ip(0, -(physics_state.midtop[1] - e2.rect.midbottom[1]))
-                        entity.velocity = Vec(entity.velocity.x, 0)
-
-        self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
-
+        self.router.broadcast({hash(entity): entity.state_repr() for entity in updated})
         if self.is_running:
             reactor.callLater(1.0 / 30, self.tick)
 

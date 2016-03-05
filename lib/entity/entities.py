@@ -5,16 +5,38 @@ from .. import settings
 from .base import Entity as BaseEntity, Vec
 from ..shared import constants
 import pygame
+import random
 
 class ZombieEntity(BaseEntity):
 
-    def __init__(self):
+    def __init__(self, x=0, y=0):
         alive = True
-        rect = pygame.Rect(0,0,0,0)
+        rect = pygame.Rect(x, y, 18, 18)
         velocity = Vec(0, 0)
         resource = 'plant2'
         is_environment = False
         super(ZombieEntity, self).__init__(alive,  rect, velocity, '', resource, is_environment)
+        self.speed = 4
+        self.pause = 0
+
+    def state_repr(self):
+        return dict(
+            x = self.rect.centerx,
+            y = self.rect.bottom,
+            c = self.__class__.__name__
+        )
+
+    def get_next_state(self, game):
+        if self.pause:
+            self.pause -= 1
+            return {'rect': self.rect}
+        if random.randint(0, 60) == 0 and game.on_surface(self):
+            self.velocity = Vec(self.velocity.x, self.velocity.y - 11)
+        elif random.randint(0, 100) == 1:
+            self.pause = random.randint(20, 50)
+        return {
+            'rect': self.rect.move(self.speed, 0),
+        }
 
 
 class PlayerEntity(BaseEntity):
