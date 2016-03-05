@@ -8,6 +8,7 @@ CLIENT_ENTITY_PREFIX = 'client_'
 
 GAME_TITLE = "Zombie Brisket"
 WINDOW_SIZE = (640, 480)
+GAME_SIZE = (320,240) #the size we have that is scaled up to window size
 FPS = 30
 NETWORK_FPS = 10 #how many times a second we send stuff to server
 DEFAULT_PORT = 10543

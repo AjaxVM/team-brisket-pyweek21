@@ -31,7 +31,7 @@ class State(BaseState):
 
         self.entities = {}  # for now
 
-        self.my_screen = pygame.Surface((320,240))
+        self.my_screen = pygame.Surface(settings.GAME_SIZE)
 
         set_track('bjorn__lynne-_no_survivors_.mid')
 

@@ -57,10 +57,10 @@ class LevelLoader(object):
                 if color == '255,255,255':
                     continue
                 self.grid_elements.append((LEVEL_GRID_COLOR_MAP[color],
-                                           (int((pos[0]+0.5)*constants.LEVEL_GRID_WIDTH),
-                                            int((self.grid_size[1]-pos[1]-0.5)*constants.LEVEL_GRID_HEIGHT)
+                                           (int((pos[0])*constants.LEVEL_GRID_WIDTH),
+                                            int((self.grid_size[1]-pos[1])*constants.LEVEL_GRID_HEIGHT)
                                            )))
 
-        log.info(self.grid_elements)
+        # log.info(self.grid_elements)
 
 
