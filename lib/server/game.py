@@ -75,8 +75,8 @@ class GameServer(service.Service):
             if key in self.player_entity_hashes:
                 slot = self.player_entity_hashes[key]
                 player_actions = self.action_buffer[slot].popleft() if self.action_buffer[slot] else []
-                potential_entity_states[key] = entity.get_position_from_player_actions(player_actions)
-                log.debug('slot {} now at {}'.format(slot, potential_entity_states[key]))
+                potential_entity_states[key] = entity.get_position_from_player_actions(player_actions, self)
+                # log.debug('slot {} now at {}'.format(slot, potential_entity_states[key]))
             else:
                 potential_entity_states[key] = entity.get_next_state()
 
@@ -104,8 +104,10 @@ class GameServer(service.Service):
                 entity.rect = physics_state
                 for e2 in self.entities:
                     if e2.is_environment and entity.rect.colliderect(e2.rect):
-                        # yet another bad assumption
-                        physics_state.move_ip(0, -(physics_state.y + physics_state.height - e2.rect.y))
+                        if e2.rect.y > entity.rect.y:
+                            physics_state.move_ip(0, -(physics_state.y + physics_state.height - e2.rect.y))
+                        else:
+                            physics_state.move_ip(0, -(physics_state.midtop[1] - e2.rect.midbottom[1]))
                         entity.velocity = Vec(entity.velocity.x, 0)
 
         self.router.broadcast({hash(entity): entity.state_repr() for entity in self.entities})
@@ -116,4 +118,10 @@ class GameServer(service.Service):
     def push_actions(self, slot, actions):
         log.debug('received {} from client'.format(json.dumps(actions)))
         self.action_buffer[slot].extend(actions)
-        
+
+    def on_surface(self, entity):
+        rect = entity.rect.move(0, 1)
+        for e2 in self.entities:
+            if e2.is_environment and rect.colliderect(e2.rect):
+                return True
+        return False
