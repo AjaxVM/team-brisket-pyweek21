@@ -28,7 +28,9 @@ class GameServer(service.Service):
 
         self.fps = 1.0 / settings.FPS
         
-        self.entities = []
+        self.entities = [
+            entities.WallEntity(x * 24, 200) for x in range(10)
+        ]
         self.player_entity_hashes = {}
 
     def playerJoin(self, slot):
@@ -66,10 +68,10 @@ class GameServer(service.Service):
             else:
                 potential_entity_states[key] = entity.get_next_state()
 
-        for key_a, entity_a in potential_entity_states.iteritems():
-            for key_b, entity_b in potential_entity_states.iteritems():
+        for key_a, state_a in potential_entity_states.iteritems():
+            for key_b, state_b in potential_entity_states.iteritems():
                 if key_a < key_b:
-                    if entity_a.rect.colliderect(entity_b.rect):
+                    if state_a['rect'].colliderect(state_b['rect']):
                         log.debug('collision detected')
                         failures[key_b] = 1
 
@@ -84,7 +86,7 @@ class GameServer(service.Service):
         for entity in self.entities:
             # gravity
             if not entity.is_environment:  # don't actually like this
-                entity.velocity = Vec(entity.velocity.x, entity.velocity.y + 1)
+                entity.velocity = Vec(entity.velocity.x, min(15, entity.velocity.y + 1))
                 physics_state = entity.rect.copy()
                 physics_state.move_ip(entity.velocity.x, entity.velocity.y)
                 entity.rect = physics_state

@@ -21,6 +21,9 @@ class Entity(object):
     resource = path to image for entity
     is_enviornment = boolean is this entity a wall or floor or is it a thing that moves
     '''
+
+    tileset = 'hostile_planet'
+
     def __init__(
         self,
         alive=False,
@@ -48,13 +51,13 @@ class Entity(object):
         self.__dict__.update(kwargs)
 
     def get_next_state(self):
-        raise NotImplementedError('Implement Me')
+        return {'rect': self.rect}
 
     def get_fail_state(self):
-        raise NotImplementedError('Implement Me')
+        return {'rect': self.rect}
 
     def state_repr(self):
-        raise NotImplementedError('Implement Me')
+        return {'c': self.__class__.__name__}
 
 
 # Also may not be used because moving entities to classes
