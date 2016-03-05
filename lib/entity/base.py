@@ -47,13 +47,16 @@ class Entity(object):
     def __hash__(self):
         return self.__hash
 
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
     def set_next_state(self, **kwargs):
         self.__dict__.update(kwargs)
 
-    def get_next_state(self):
+    def get_next_state(self, game):
         return {'rect': self.rect}
 
-    def get_fail_state(self):
+    def get_fail_state(self, game):
         return {'rect': self.rect}
 
     def state_repr(self):
