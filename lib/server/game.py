@@ -57,7 +57,7 @@ class GameServer(service.Service):
             self.is_running = True
             self.entities = []
             self.player_entity_hashes = {}
-            self.loadLevel('level1')
+            self.loadLevel('level2')
             reactor.callLater(1.0 / 30, self.tick)
             log.debug('Starting server game loop')
 
