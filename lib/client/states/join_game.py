@@ -36,11 +36,11 @@ class State(BaseState):
                 else:
                     self.ip_entry.handleKey(event.key)
 
-    def render(self):
-        render_menu_bg(self.game.screen)
-        outlined_text(self.game.screen, CRAP_LOADER['menu_font'], "The server's IP address:", (255, 255, 255), 50, 100)
-        outlined_text(self.game.screen, CRAP_LOADER['menu_font'], "* Your friend should open port {}".format(DEFAULT_PORT), (255, 255, 255), 50, 200)
-        self.ip_entry.render(self.game.screen)
+    def render(self, screen):
+        render_menu_bg(screen)
+        outlined_text(screen, CRAP_LOADER['menu_font'], "The server's IP address:", (255, 255, 255), 50, 100)
+        outlined_text(screen, CRAP_LOADER['menu_font'], "* Your friend should open port {}".format(DEFAULT_PORT), (255, 255, 255), 50, 200)
+        self.ip_entry.render(screen)
 
 
 class IPEntry(object):

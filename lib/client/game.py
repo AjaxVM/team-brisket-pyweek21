@@ -60,7 +60,7 @@ class Game(object):
 
         self.screen.fill((0,0,0))
 
-        self.state_obj.render()
+        self.state_obj.render(self.screen)
 
         pygame.display.flip()
 
