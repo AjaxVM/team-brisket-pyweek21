@@ -22,15 +22,12 @@ class State(BaseState):
 
     def __init__(self, game):
         super(State, self).__init__(game)
-
         self.movement_actions = [
             constants.PLAYER_MOVE_RIGHT,
             constants.PLAYER_MOVE_LEFT,
             constants.PLAYER_MOVE_JUMP
         ]
-
         self.entities = {}  # for now
-
         self.view_screen = pygame.Surface(settings.GAME_SIZE)
         self.viewport = self.view_screen.get_rect()
         self.players = []
@@ -40,6 +37,8 @@ class State(BaseState):
     def backToMenu(self):
         self.game.game_client.disconnect()
         self.game.gotoState('main_menu')
+        self.entities = {}
+        self.players = []
 
     def doAction(self, action):
         if action in self.movement_actions:
@@ -94,6 +93,7 @@ class State(BaseState):
                 klass = getattr(entities, data.pop('c'))
                 entity = self.entities[entity_id] = klass(**data)
                 if isinstance(entity, entities.PlayerEntity) and not any(hash(player) == entity_id for player in self.players):
+                    log.debug('Received player entity: {}, {}'.format(klass.__name__, data))
                     self.players.append(entity)
             newx = data.get('x', entity.rect.centerx)
             newy = data.get('y', entity.rect.bottom)

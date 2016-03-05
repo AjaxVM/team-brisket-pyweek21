@@ -19,15 +19,11 @@ class GameServer(service.Service):
 
     def __init__(self, router):
         self.router = router
-        self.is_running = True
-        self.level = LevelLoader('level2')
-
+        self.is_running = False
         self.action_buffer = {
             i: deque() for i in xrange(1, settings.NUMBER_OF_PLAYERS + 1)
         }
-
         self.fps = 1.0 / settings.FPS
-
         self.entities = []
         self.player_entity_hashes = {}
 
@@ -47,23 +43,26 @@ class GameServer(service.Service):
             )
 
     def playerJoin(self, slot):
+        self.start()
         player_entity = entities.PlayerEntity(slot=slot)
         self.player_entity_hashes[hash(player_entity)] = slot
         self.entities.append(player_entity)
-        self.start()
 
     def playerLeave(self, slot):
         if self.router.empty():
             self.stop()
 
     def start(self):
-        if not self.running:
+        if not self.is_running:
             self.is_running = True
+            self.entities = []
+            self.player_entity_hashes = {}
+            self.loadLevel('level1')
             reactor.callLater(1.0 / 30, self.tick)
             log.debug('Starting server game loop')
 
     def stop(self):
-        self.running = False
+        self.is_running = False
         log.debug('Stopping server game loop')
 
     def tick(self):
