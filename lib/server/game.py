@@ -27,9 +27,6 @@ class GameServer(service.Service):
         self.entities = []
         self.player_entity_hashes = {}
 
-        #TODO: should loadLevel reset entities so we can load more levels, or should this not happen at init?
-        self.loadLevel('level2')
-
     def loadLevel(self, name):
         level = LevelLoader(name)
 
@@ -62,7 +59,7 @@ class GameServer(service.Service):
             self.is_running = True
             self.entities = []
             self.player_entity_hashes = {}
-            self.loadLevel('level2')
+            self.loadLevel('level1')
             reactor.callLater(1.0 / 30, self.tick)
             log.debug('Starting server game loop')
 

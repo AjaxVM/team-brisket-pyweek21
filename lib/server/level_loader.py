@@ -16,9 +16,9 @@ log = logging.getLogger(__name__)
 LEVEL_GRID_COLOR_MAP = {
     '255,255,255': 'nothing', #this should never show up
     '0,0,0':       entities.WallEntity, #bottom of level
-    '255,0,0':     'spike', #instant death
-    '0,255,0':     'platform', #yay
-    '0,0,255':     'ice', #platform, but slidy...
+    '255,0,0':     entities.WallEntity, #instant death
+    '0,255,0':     entities.WallEntity, #yay
+    '0,0,255':     entities.WallEntity, #platform, but slidy...
     '100,100,100': entities.DoorEntitiyTop, #platforms but look cooler
     '200,200,200': entities.DoorEntitiyBottom, #get here to pass level
 }
