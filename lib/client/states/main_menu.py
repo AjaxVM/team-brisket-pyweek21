@@ -62,13 +62,13 @@ class State(BaseState):
                     self.currentOptionExecute()
                     return
 
-    def render(self):
-        render_menu_bg(self.game.screen)
+    def render(self, screen):
+        render_menu_bg(screen)
         posx = 50
         posy = 100
         for i, (name, func) in enumerate(self.options):
             color = (255,255,255)
             if i == self.current_option:
                 color = (0,255,0)
-            outlined_text(self.game.screen, self.font, name, color, posx, posy)
+            outlined_text(screen, self.font, name, color, posx, posy)
             posy += 50

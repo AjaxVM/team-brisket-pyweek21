@@ -11,7 +11,7 @@ class BaseState(object):
         #buh bye - cleanup stuff
         pass
 
-    def render(self):
+    def render(self, screen):
         #do render stuff
         pass
 

@@ -60,11 +60,11 @@ class State(BaseState):
             if held_keys[key]:
                 self.doAction(action)
 
-    def render(self):
+    def render(self, screen):
         self.my_screen.fill((0,0,0))
         for entity_id, entity in self.entities.iteritems():
             RESOURCE.blit(self.my_screen, entity.tileset, entity.resource, entity.rect)
-        pygame.transform.scale(self.my_screen, (640,480), self.game.screen)
+        pygame.transform.scale(self.my_screen, (640,480), screen)
 
     def objectReceived(self, obj):
         # TODO way to distinguish different things the server sends, right now we're assuming its entity positions
